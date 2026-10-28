@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>好物上架｜卡夫卡愛旅行</title>
+<link rel="icon" href="avatar.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Barlow+Condensed:wght@600;700&display=swap">
+<style>
+/* 上架頁：左邊填表、右邊即時預覽連結頁上的那張卡；手機改成上下排。下面是已上架清單，可以載入修改 */
+:root{
+  --bg:#EAEDEC; --surface:#FFFFFF; --ink:#1A2526; --muted:#667577; --rule:#D3DBDA;
+  --brand:#347E86; --brand-ink:#FFFFFF; --soft:#E1EEED;
+  --hot:#D4621B; --ok:#1F7A4D; --ok-soft:#E3F3EA; --bad:#B3261E; --bad-soft:#FBE7E5;
+  --ph:#CBD6D5; --shadow:0 1px 2px rgba(20,40,40,.06),0 4px 14px rgba(20,40,40,.06);
+  --font:"Noto Sans TC","PingFang TC","Heiti TC","Microsoft JhengHei",sans-serif;
+  --num:"Barlow Condensed","Arial Narrow",var(--font);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#111819; --surface:#1B2426; --ink:#E6EEEE; --muted:#9AAAAB; --rule:#2F3B3D;
+  --brand:#5FB0B8; --brand-ink:#0F1819; --soft:#1F3133;
+  --hot:#F29A55; --ok:#5CCB8F; --ok-soft:#173326; --bad:#FF8A80; --bad-soft:#3A1F1D;
+  --ph:#2A3A3B; --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark}}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-top:max(20px,env(safe-area-inset-top,0px));padding-bottom:calc(48px + env(safe-area-inset-bottom,0px));-webkit-font-smoothing:antialiased}
+a{color:var(--brand)}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+[hidden]{display:none!important}
+img{display:block;max-width:100%}
+
+.wrap{max-width:920px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+header img{width:44px;height:44px;border-radius:50%;background:#fff}
+header h1{margin:0;font-size:22px;font-weight:900;letter-spacing:.05em}
+header .sp{flex:1}
+header a{font-size:14px;font-weight:700;text-decoration:none}
+
+.card{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:18px}
+.key{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.key label{font-weight:700}
+.key input{flex:1;min-width:140px}
+.key small{color:var(--muted);font-size:12.5px;flex-basis:100%}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:20px;align-items:start}
+@media (max-width:700px){.grid{grid-template-columns:1fr}.pv{order:-1;max-width:240px;margin:0 auto;width:100%}}
+
+form{display:flex;flex-direction:column;gap:14px}
+.row{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px}
+@media (max-width:420px){.row{grid-template-columns:1fr}}
+.f{display:flex;flex-direction:column;gap:4px;min-width:0}
+.f > span{font-size:13.5px;font-weight:700}
+.f > span em{font-style:normal;color:var(--hot);margin-left:2px}
+.f small{font-size:12px;color:var(--muted)}
+input[type=text],input[type=url],input[type=date],input[type=password],input[type=number]{width:100%;height:44px;border:1.5px solid var(--rule);border-radius:10px;background:var(--surface);padding:0 12px;font-size:16px}
+input:focus{border-color:var(--brand);outline:none}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.seg label{position:relative}
+.seg input{position:absolute;opacity:0}
+.seg span{display:flex;align-items:center;justify-content:center;height:42px;border:1.5px solid var(--rule);border-radius:10px;font-weight:700;font-size:14px;cursor:pointer}
+.seg input:checked + span{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+.seg input:focus-visible + span{outline:2px solid var(--brand);outline-offset:2px}
+.seg .end input:checked + span{background:var(--muted);border-color:var(--muted)}
+
+.drop{border:1.5px dashed var(--rule);border-radius:12px;padding:12px;display:flex;align-items:center;gap:12px;cursor:pointer;background:var(--bg)}
+.drop.has{border-style:solid}
+.drop .thumb{width:54px;height:68px;border-radius:8px;background:var(--ph);flex:none;overflow:hidden}
+.drop .thumb img{width:100%;height:100%;object-fit:cover}
+.drop b{font-size:14px;display:block}
+.drop small{font-size:12px;color:var(--muted)}
+.drop input{display:none}
+.clearimg{margin-left:auto;border:0;background:none;color:var(--muted);font-size:13px;cursor:pointer}
+
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{height:48px;padding:0 22px;border:0;border-radius:12px;background:var(--brand);color:var(--brand-ink);font-weight:900;font-size:16px;cursor:pointer;letter-spacing:.04em}
+.btn[disabled]{opacity:.55;cursor:progress}
+.ghost{height:48px;padding:0 16px;border:1.5px solid var(--rule);border-radius:12px;background:transparent;font-weight:700;cursor:pointer}
+.msg{border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.55}
+.msg.ok{background:var(--ok-soft);color:var(--ok)}
+.msg.bad{background:var(--bad-soft);color:var(--bad)}
+.msg .lnk{display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap}
+.msg code{font-family:inherit;font-weight:700;background:var(--surface);color:var(--ink);border-radius:6px;padding:2px 8px;user-select:all;-webkit-user-select:all}
+.msg button{border:0;border-radius:8px;padding:4px 12px;background:var(--ok);color:#fff;font-weight:700;font-size:13px;cursor:pointer}
+
+/* 預覽卡：跟連結頁上的商品圖磚同一套樣式 */
+.pv h2,.list h2{margin:0 0 10px;font-size:13px;letter-spacing:.14em;color:var(--muted)}
+.tile{position:relative;display:block;aspect-ratio:4/5;max-width:100%;border-radius:20px;overflow:hidden;background:var(--ph);box-shadow:var(--shadow);border:3px solid var(--surface)}
+.tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%}
+.tile .ph{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--num);font-weight:700;font-size:56px;color:var(--ink);opacity:.2}
+.tile::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(0,0,0,.72) 100%)}
+.tile .cap{position:absolute;left:8px;right:8px;bottom:9px;z-index:1;color:#fff;text-align:center;font-size:14px;font-weight:700;line-height:1.4;text-shadow:0 1px 3px rgba(0,0,0,.35)}
+.tile .cap small{display:block;font-size:11.5px;font-weight:500;opacity:.92}
+.tile .no{position:absolute;left:8px;top:8px;z-index:1;background:rgba(0,0,0,.55);color:#fff;font-family:var(--num);font-weight:700;font-size:14px;line-height:1;border-radius:6px;padding:4px 6px 3px}
+.tile .end{position:absolute;right:8px;top:8px;z-index:1;background:var(--hot);color:#fff;font-size:11.5px;font-weight:700;border-radius:999px;padding:1px 9px}
+.tile.off{filter:grayscale(1);opacity:.6}
+.pv p{margin:8px 2px 0;font-size:12px;color:var(--muted);text-align:center}
+
+/* 已上架清單 */
+.items{display:flex;flex-direction:column}
+.it{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--rule)}
+.it:first-child{border-top:0}
+.it .th{width:44px;height:55px;border-radius:8px;background:var(--ph);overflow:hidden;position:relative}
+.it .th img{width:100%;height:100%;object-fit:cover}
+.it b{display:block;font-size:14.5px;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.it small{display:block;font-size:12.5px;color:var(--muted)}
+.it .n{font-family:var(--num);font-weight:700;color:var(--brand);margin-right:6px}
+.pill{display:inline-block;font-size:11.5px;font-weight:700;border-radius:999px;padding:0 8px;margin-left:4px;background:var(--soft);color:var(--brand)}
+.pill.live{background:var(--hot);color:#fff}
+.pill.off{background:var(--rule);color:var(--muted)}
+.it button{border:1.5px solid var(--rule);background:transparent;border-radius:10px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.empty{color:var(--muted);font-size:14px;text-align:center;padding:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="avatar.jpg" alt="" width="44" height="44">
+    <h1>好物上架</h1>
+    <span class="sp"></span>
+    <a href="https://kafu.tw/bio" target="_blank" rel="noopener">看連結頁 ›</a>
+  </header>
+
+  <div class="card key" id="keyBox">
+    <label for="key">通行碼</label>
+    <input id="key" type="password" autocomplete="off" placeholder="第一次要填，之後這台裝置會記住">
+    <small>通行碼只存在這台裝置，換手機或電腦要重新填一次</small>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <form id="f" novalidate>
+        <div class="row">
+          <label class="f"><span>編號<em>＊</em></span><input id="no" type="number" inputmode="numeric" min="1" required><small id="noHint">影片封面上的數字</small></label>
+          <label class="f"><span>商品名<em>＊</em></span><input id="name" type="text" required maxlength="40" placeholder="例如：歌林雙門冰箱"></label>
+        </div>
+
+        <div class="f">
+          <span>狀態<em>＊</em></span>
+          <div class="seg" role="radiogroup" aria-label="狀態">
+            <label><input type="radio" name="status" value="團購中" checked><span>團購中</span></label>
+            <label><input type="radio" name="status" value="隨時可買"><span>隨時可買</span></label>
+            <label class="end"><input type="radio" name="status" value="已結束"><span>下架</span></label>
+          </div>
+        </div>
+
+        <label class="f" id="untilBox"><span>團購截止日</span><input id="until" type="date"><small>過了這天，連結頁會自動收起來</small></label>
+
+        <label class="f"><span>購買連結<em>＊</em></span><input id="url" type="url" inputmode="url" required placeholder="https://"></label>
+
+        <div class="row">
+          <label class="f"><span>折扣碼</span><input id="code" type="text" maxlength="30" placeholder="沒有就空著"></label>
+          <label class="f"><span>YT 影片網址</span><input id="video" type="url" inputmode="url" placeholder="有的話封面會自動抓"></label>
+        </div>
+
+        <div class="f">
+          <span>封面圖</span>
+          <label class="drop" id="drop">
+            <span class="thumb" id="thumb"></span>
+            <span><b id="dropT">選一張封面圖</b><small id="dropS">有填 YT 網址就不用上傳；直式的最好看</small></span>
+            <button type="button" class="clearimg" id="clearImg" hidden>拿掉</button>
+            <input id="file" type="file" accept="image/*">
+          </label>
+        </div>
+
+        <div class="actions">
+          <button class="btn" id="send" type="submit">上架</button>
+          <button class="ghost" id="reset" type="button">清空重填</button>
+        </div>
+        <div class="msg" id="msg" hidden></div>
+      </form>
+    </div>
+
+    <div class="pv">
+      <h2>連結頁上會長這樣</h2>
+      <div class="tile" id="pv"></div>
+      <p>點這張卡會直接打開購買連結</p>
+    </div>
+  </div>
+
+  <div class="card list">
+    <h2>已上架（點「修改」帶進上面重填，送出後以最新那筆為準）</h2>
+    <div class="items" id="items"><div class="empty">讀取中…</div></div>
+  </div>
+</div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbzIiQU2yhVaYLK9T9-Zjb3sX7N1uQbNEv-UGQY2ec8ZLBElGMEeRFDEGD92hXxZ-u6ysA/exec';
+const SHEET_ID = '1TE0iPbRxsFdud-o5_Xd_Cs1blXWQqFU8mxaKve-DynE';
+const SOURCES = ['gid=800067636', 'gid=855548558', 'sheet=' + encodeURIComponent('上架清單')];
+const KEY_STORE = 'kafu-links-admin-key';
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const safeUrl = u => /^https?:\/\//i.test(u || '') ? u : '';
+let ITEMS = [], imgData = null, keepCover = '';
+
+/* ---------- 跟連結頁共用的解析 ---------- */
+function parseCSV(text){
+  const rows = []; let row = [], cell = '', q = false;
+  for (let i = 0; i < text.length; i++){
+    const c = text[i];
+    if (q){ if (c === '"'){ if (text[i+1] === '"'){ cell += '"'; i++; } else q = false; } else cell += c; }
+    else if (c === '"') q = true;
+    else if (c === ',') { row.push(cell); cell = ''; }
+    else if (c === '\n' || c === '\r'){ if (c === '\r' && text[i+1] === '\n') i++; row.push(cell); rows.push(row); row = []; cell = ''; }
+    else cell += c;
+  }
+  if (cell !== '' || row.length){ row.push(cell); rows.push(row); }
+  return rows;
+}
+function ytId(url){
+  const m = /(?:youtu\.be\/|youtube\.com\/(?:shorts\/|watch\?(?:.*&)?v=|embed\/|live\/))([\w-]{11})/.exec(url || '');
+  return m ? m[1] : '';
+}
+function driveImg(u){
+  const m = /drive\.google\.com\/(?:open\?id=|file\/d\/|uc\?(?:export=\w+&)?id=)([\w-]{20,})/.exec(u || '');
+  return m ? `https://lh3.googleusercontent.com/d/${m[1]}=w720` : safeUrl(u);
+}
+function parseDate(s){
+  const m = /(\d{4})\D(\d{1,2})\D(\d{1,2})/.exec(s || '');
+  return m ? new Date(+m[1], +m[2]-1, +m[3], 23, 59, 59) : null;
+}
+function toItems(rows){
+  const head = (rows.shift() || []).map(h => h.trim());
+  const col = name => head.findIndex(h => h.startsWith(name));
+  const C = { no:col('編號'), name:col('商品名'), video:col('YT'), status:col('狀態'), until:col('團購截止'),
+    code:head.findIndex(h => h === '折扣碼'), url:col('購買連結') >= 0 ? col('購買連結') : col('按鈕1連結'), cover:col('封面圖') };
+  const g = (r, k) => C[k] >= 0 ? (r[C[k]] || '').trim() : '';
+  return rows.map(r => {
+    const name = g(r,'name'); if (!name) return null;
+    return { no: g(r,'no').replace(/\D/g,''), name, video: g(r,'video'), url: g(r,'url'), status: g(r,'status') || '隨時可買',
+      until: g(r,'until'), code: g(r,'code'), coverRaw: g(r,'cover') };
+  }).filter(Boolean);
+}
+function mergeItems(lists){
+  const byNo = new Map(), extra = [];
+  lists.flat().forEach(it => it.no ? byNo.set(it.no, it) : extra.push(it));
+  return [...byNo.values(), ...extra].sort((a, b) => (+b.no || 0) - (+a.no || 0));
+}
+function coverOf(it){
+  const c = driveImg(it.coverRaw), id = ytId(it.video);
+  return c || (id ? `https://i.ytimg.com/vi/${id}/oar2.jpg` : '');
+}
+function isOff(it){
+  if (/結束|下架/.test(it.status)) return true;
+  const end = /團購/.test(it.status) ? parseDate(it.until) : null;
+  return !!(end && end < new Date());
+}
+
+/* ---------- 預覽卡 ---------- */
+function readForm(){
+  return { no: $('#no').value.replace(/\D/g,''), name: $('#name').value.trim(), url: $('#url').value.trim(),
+    code: $('#code').value.trim(), video: $('#video').value.trim(), until: $('#until').value,
+    status: document.querySelector('input[name=status]:checked').value };
+}
+function preview(){
+  const d = readForm();
+  const live = d.status === '團購中';
+  $('#untilBox').hidden = !live;
+  const id = ytId(d.video);
+  const src = imgData ? imgData.preview : (keepCover ? driveImg(keepCover) : (id ? `https://i.ytimg.com/vi/${id}/oar2.jpg` : ''));
+  const end = live ? parseDate(d.until) : null;
+  const left = end ? Math.ceil((end - new Date()) / 86400000) - 1 : null;
+  const date = end ? `～${end.getMonth()+1}/${end.getDate()}` : '';
+  $('#pv').className = 'tile' + (d.status === '已結束' ? ' off' : '');
+  $('#pv').innerHTML = `<span class="ph">${esc(d.no || '?')}</span>
+    ${src ? `<img src="${esc(src)}" alt="" onerror="this.remove()">` : ''}
+    ${d.no ? `<span class="no">No.${esc(d.no)}</span>` : ''}
+    ${left !== null && left <= 3 ? `<span class="end">${left <= 0 ? '今天截止' : `剩 ${left} 天`}</span>` : ''}
+    <span class="cap">${esc(d.name || '商品名')}${esc(date)}${d.code ? `<small>折扣碼 ${esc(d.code)}</small>` : ''}</span>`;
+}
+
+/* ---------- 封面圖：在瀏覽器裡先縮到 1080 寬再送，省流量也比較快 ---------- */
+function loadImage(file){
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, 1080 / img.naturalWidth);
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.naturalWidth * scale); c.height = Math.round(img.naturalHeight * scale);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      const dataUrl = c.toDataURL('image/jpeg', 0.85);
+      URL.revokeObjectURL(url);
+      res({ preview: dataUrl, data: dataUrl.split(',')[1], type: 'image/jpeg' });
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('讀不到這張圖，換一張試試看')); };
+    img.src = url;
+  });
+}
+function showImg(){
+  const src = imgData ? imgData.preview : (keepCover ? driveImg(keepCover) : '');
+  $('#thumb').innerHTML = src ? `<img src="${esc(src)}" alt="">` : '';
+  $('#drop').classList.toggle('has', !!src);
+  $('#clearImg').hidden = !src;
+  $('#dropT').textContent = imgData ? '已選好封面' : keepCover ? '沿用原本的封面' : '選一張封面圖';
+  $('#dropS').textContent = src ? '想換的話再點一次' : '有填 YT 網址就不用上傳；直式的最好看';
+}
+$('#file').addEventListener('change', async e => {
+  const f = e.target.files[0]; if (!f) return;
+  try { imgData = await loadImage(f); keepCover = ''; showImg(); preview(); }
+  catch (err) { say('bad', err.message); }
+  e.target.value = '';
+});
+$('#clearImg').addEventListener('click', e => { e.preventDefault(); imgData = null; keepCover = ''; showImg(); preview(); });
+
+/* ---------- 送出 ---------- */
+function say(kind, html){ const m = $('#msg'); m.className = 'msg ' + kind; m.innerHTML = html; m.hidden = false; }
+$('#f').addEventListener('input', preview);
+$('#f').addEventListener('change', preview);
+$('#f').addEventListener('submit', async e => {
+  e.preventDefault();
+  const d = readForm(), key = $('#key').value.trim();
+  const miss = [];
+  if (!key) miss.push('通行碼');
+  if (!d.no) miss.push('編號');
+  if (!d.name) miss.push('商品名');
+  if (!safeUrl(d.url)) miss.push('購買連結（要 https:// 開頭）');
+  if (d.video && !ytId(d.video)) miss.push('YT 影片網址看起來不對');
+  if (miss.length) return say('bad', '還差：' + miss.map(esc).join('、'));
+  if (!imgData && !keepCover && !ytId(d.video)) return say('bad', '沒有 YT 網址的話，要上傳一張封面圖喔');
+  const dup = ITEMS.find(it => it.no === d.no);
+  $('#send').disabled = true; $('#send').textContent = '上架中…';
+  try {
+    const res = await fetch(API, { method: 'POST', body: JSON.stringify({ action: 'add', key, ...d,
+      until: d.status === '團購中' ? d.until : '', image: imgData ? { data: imgData.data, type: imgData.type } : null, keepCover }) });
+    const out = await res.json();
+    if (!out.ok) throw new Error(out.error || '送出失敗');
+    try { localStorage.setItem(KEY_STORE, key); } catch {}
+    const link = `kafu.tw/bio#${out.no}`;
+    say('ok', `${dup ? '已更新' : '已上架'} No.${esc(out.no)}「${esc(d.name)}」，連結頁大約 1 分鐘內會出現。
+      <span class="lnk">私訊可以直接貼：<code>${link}</code><button type="button" data-copy="https://${link}">複製</button></span>`);
+    imgData = null; keepCover = '';
+    loadList();
+  } catch (err) {
+    say('bad', esc(err.message === 'Failed to fetch' ? '連不上 Google，檢查一下網路再試一次' : err.message));
+  } finally {
+    $('#send').disabled = false; $('#send').textContent = '上架';
+  }
+});
+$('#msg').addEventListener('click', async e => {
+  const b = e.target.closest('[data-copy]'); if (!b) return;
+  try { await navigator.clipboard.writeText(b.dataset.copy); b.textContent = '已複製'; } catch { b.textContent = '請長按複製'; }
+});
+$('#reset').addEventListener('click', () => {
+  $('#f').reset(); imgData = null; keepCover = ''; showImg(); $('#msg').hidden = true; suggestNo(); preview();
+});
+
+/* ---------- 已上架清單 ---------- */
+function suggestNo(){
+  const max = ITEMS.reduce((m, it) => Math.max(m, +it.no || 0), 0);
+  if (!$('#no').value) $('#no').placeholder = String(max + 1);
+  $('#noHint').textContent = max ? `影片封面上的數字（目前最大是 ${max}）` : '影片封面上的數字';
+}
+function renderList(){
+  $('#items').innerHTML = ITEMS.length ? ITEMS.map((it, i) => {
+    const src = coverOf(it), off = isOff(it);
+    const st = off ? '<span class="pill off">已下架</span>' : /團購/.test(it.status) ? `<span class="pill live">團購中${it.until ? '～' + esc(it.until) : ''}</span>` : '<span class="pill">隨時可買</span>';
+    return `<div class="it"><span class="th">${src ? `<img src="${esc(src)}" alt="" loading="lazy" onerror="this.remove()">` : ''}</span>
+      <span style="min-width:0"><b><span class="n">No.${esc(it.no)}</span>${esc(it.name)}</b><small>${st} ${it.code ? '折扣碼 ' + esc(it.code) : ''}</small></span>
+      <button type="button" data-i="${i}">修改</button></div>`;
+  }).join('') : '<div class="empty">還沒有商品，從上面新增第一筆吧</div>';
+}
+$('#items').addEventListener('click', e => {
+  const b = e.target.closest('[data-i]'); if (!b) return;
+  const it = ITEMS[+b.dataset.i];
+  $('#no').value = it.no; $('#name').value = it.name; $('#url').value = it.url; $('#code').value = it.code; $('#video').value = it.video;
+  const st = /結束|下架/.test(it.status) ? '已結束' : /團購/.test(it.status) ? '團購中' : '隨時可買';
+  document.querySelector(`input[name=status][value="${st}"]`).checked = true;
+  const dt = parseDate(it.until);
+  $('#until').value = dt ? `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}` : '';
+  imgData = null; keepCover = it.coverRaw; showImg(); preview(); $('#msg').hidden = true;
+  window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+});
+function loadList(){
+  const base = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=1&`;
+  Promise.all(SOURCES.map(s => fetch(`${base}${s}&t=${Date.now()}`, {cache:'no-store'})
+      .then(r => r.ok ? r.text() : '').then(t => t ? toItems(parseCSV(t)) : []).catch(() => [])))
+    .then(lists => { ITEMS = mergeItems(lists); renderList(); suggestNo(); });
+}
+
+try { $('#key').value = localStorage.getItem(KEY_STORE) || ''; } catch {}
+showImg(); preview(); loadList();
+</script>
+</body>
+</html>

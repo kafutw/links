@@ -195,9 +195,9 @@ svg{display:block}
 /* 商品清單來自 Google 試算表「卡夫卡好物連結頁｜商品清單」，小臻改試算表就會更新；
    欄位用標題名稱對應，順序調整不影響。讀不到時用這台裝置上次成功讀到的版本。 */
 const SHEET_ID = '1TE0iPbRxsFdud-o5_Xd_Cs1blXWQqFU8mxaKve-DynE';
-const SHEET_CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=1&gid=`;
-/* 兩個分頁都讀：先讀手動填的商品清單，再讀「新增商品」表單的回應；同一個編號以後送出的為準 */
-const SHEET_GIDS = ['800067636', '855548558'];
+const SHEET_CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=1&`;
+/* 三個分頁都讀：手動填的商品清單 → 表單回應 → 上架頁（admin.html）寫的「上架清單」；同一個編號以後面的為準 */
+const SHEET_GIDS = ['gid=800067636', 'gid=855548558', 'sheet=' + encodeURIComponent('上架清單')];
 const CACHE_KEY = 'kafu-links-items-v2';
 /* 點擊統計：試算表裡的 Apps Script，收到編號就在那一列「點擊數」加 1，並記一筆到「點擊紀錄」分頁 */
 const CLICK_URL = 'https://script.google.com/macros/s/AKfycbzIiQU2yhVaYLK9T9-Zjb3sX7N1uQbNEv-UGQY2ec8ZLBElGMEeRFDEGD92hXxZ-u6ysA/exec';
