@@ -195,7 +195,9 @@ svg{display:block}
 /* 商品清單來自 Google 試算表「卡夫卡好物連結頁｜商品清單」，小臻改試算表就會更新；
    欄位用標題名稱對應，順序調整不影響。讀不到時用這台裝置上次成功讀到的版本。 */
 const SHEET_ID = '1TE0iPbRxsFdud-o5_Xd_Cs1blXWQqFU8mxaKve-DynE';
-const SHEET_CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=1&gid=800067636`;
+const SHEET_CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=1&gid=`;
+/* 兩個分頁都讀：先讀手動填的商品清單，再讀「新增商品」表單的回應；同一個編號以後送出的為準 */
+const SHEET_GIDS = ['800067636', '855548558'];
 const CACHE_KEY = 'kafu-links-items-v2';
 /* 點擊統計：試算表裡的 Apps Script，收到編號就在那一列「點擊數」加 1，並記一筆到「點擊紀錄」分頁 */
 const CLICK_URL = 'https://script.google.com/macros/s/AKfycbzIiQU2yhVaYLK9T9-Zjb3sX7N1uQbNEv-UGQY2ec8ZLBElGMEeRFDEGD92hXxZ-u6ysA/exec';
@@ -263,7 +265,7 @@ function toItems(rows){
   const head = (rows.shift() || []).map(h => h.trim());
   const col = name => head.findIndex(h => h.startsWith(name));
   const C = { no:col('編號'), name:col('商品名'), video:col('YT'), status:col('狀態'), until:col('團購截止'),
-    code:head.findIndex(h => h === '折扣碼'), url:col('按鈕1連結'), cover:col('封面圖') };
+    code:head.findIndex(h => h === '折扣碼'), url:col('購買連結') >= 0 ? col('購買連結') : col('按鈕1連結'), cover:col('封面圖') };
   const g = (r, k) => C[k] >= 0 ? (r[C[k]] || '').trim() : '';
   return rows.map(r => {
     const name = g(r,'name'); if (!name) return null;
@@ -271,9 +273,19 @@ function toItems(rows){
     return {
       no: g(r,'no').replace(/\D/g,''), name, video: safeUrl(g(r,'video')), url: safeUrl(g(r,'url')),
       status: /團購/.test(st) ? 'live' : /結束|下架/.test(st) ? 'ended' : 'long',
-      until: g(r,'until'), code: g(r,'code'), cover: safeUrl(g(r,'cover')),
+      until: g(r,'until'), code: g(r,'code'), cover: driveImg(g(r,'cover')),
     };
-  }).filter(Boolean).sort((a, b) => (+b.no || 0) - (+a.no || 0));
+  }).filter(Boolean);
+}
+/* 表單上傳的封面是雲端硬碟連結，轉成可以直接顯示的圖片網址（資料夾要開「知道連結的人可檢視」） */
+function driveImg(u){
+  const m = /drive\.google\.com\/(?:open\?id=|file\/d\/|uc\?(?:export=\w+&)?id=)([\w-]{20,})/.exec(u || '');
+  return m ? `https://lh3.googleusercontent.com/d/${m[1]}=w720` : safeUrl(u);
+}
+function mergeItems(lists){
+  const byNo = new Map(), extra = [];
+  lists.flat().forEach(it => it.no ? byNo.set(it.no, it) : extra.push(it));
+  return [...byNo.values(), ...extra].sort((a, b) => (+b.no || 0) - (+a.no || 0));
 }
 
 /* ---------- 畫面 ---------- */
@@ -352,13 +364,12 @@ function afterLoad(){
 }
 try { ITEMS = JSON.parse(localStorage.getItem(CACHE_KEY) || '[]'); } catch { ITEMS = []; }
 if (ITEMS.length) render();
-fetch(SHEET_CSV + '&t=' + Date.now(), {cache:'no-store'})
-  .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
-  .then(t => {
-    const items = toItems(parseCSV(t));
+Promise.all(SHEET_GIDS.map(gid => fetch(`${SHEET_CSV}${gid}&t=${Date.now()}`, {cache:'no-store'})
+    .then(r => r.ok ? r.text() : '').then(t => t ? toItems(parseCSV(t)) : []).catch(() => [])))
+  .then(lists => {
+    const items = mergeItems(lists);
     if (items.length){ ITEMS = items; try { localStorage.setItem(CACHE_KEY, JSON.stringify(items)); } catch {} }
   })
-  .catch(() => {})
   .finally(afterLoad);
 </script>
 </body>
