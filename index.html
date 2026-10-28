@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>卡夫卡愛旅行｜影片裡的好物在這裡買</title>
+<meta name="description" content="卡夫卡愛旅行影片裡出現的商品、團購都在這裡，點圖就能買；也可以從這裡追蹤我們的 YouTube、Facebook、Instagram、Threads。">
+<meta property="og:title" content="卡夫卡愛旅行｜影片裡的好物在這裡買">
+<meta property="og:description" content="影片裡出現的商品、團購都在這裡，點圖就能買。">
+<meta property="og:image" content="https://kafutw.github.io/links/og.jpg">
+<meta property="og:type" content="website">
+<link rel="icon" href="avatar.jpg">
+<link rel="apple-touch-icon" href="avatar.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Barlow+Condensed:wght@600;700&display=swap">
+<style>
+/* 單欄手機頁 440px：頭像置中 → LINE 主按鈕 → 團購／常態好物兩欄圖磚 → 頻道數字磚 → 最新影片 → 合作 */
+:root{
+  --bg:#EAEDEC; --surface:#FFFFFF; --ink:#1A2526; --muted:#667577; --rule:#D9DFDE;
+  --brand:#347E86; --brand-ink:#FFFFFF; --line:#06C755;
+  --hot:#D4621B;
+  --yt:#E5002D; --fb:#1877F2; --ig:#D62E6F; --xhs:#FF2442;
+  --shadow:0 1px 2px rgba(20,40,40,.06),0 4px 14px rgba(20,40,40,.06);
+  --ph:#CBD6D5;
+  --font:"Noto Sans TC","PingFang TC","Heiti TC","Microsoft JhengHei",sans-serif;
+  --num:"Barlow Condensed","Arial Narrow",var(--font);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#111819; --surface:#1B2426; --ink:#E6EEEE; --muted:#9AAAAB; --rule:#2B3638;
+  --brand:#5FB0B8; --brand-ink:#0F1819; --line:#2BD46F;
+  --hot:#F29A55;
+  --yt:#FF4D6A; --fb:#4D9BFF; --ig:#F06398; --xhs:#FF5C73;
+  --shadow:0 1px 2px rgba(0,0,0,.3); --ph:#2A3A3B; color-scheme:dark}}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.6;
+  padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px));
+  padding-top:max(28px,env(safe-area-inset-top,0px));padding-bottom:calc(48px + env(safe-area-inset-bottom,0px));-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:3px;border-radius:12px}
+img{display:block;max-width:100%}
+svg{display:block}
+[hidden]{display:none!important}
+
+.page{max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+
+/* 頭部 */
+.hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px}
+.hero img{width:104px;height:104px;border-radius:50%;background:#fff;box-shadow:var(--shadow);margin-bottom:8px}
+.hero h1{margin:0;font-size:21px;font-weight:900;letter-spacing:.06em}
+.hero p{margin:0;font-size:12.5px;color:var(--muted)}
+.icons{display:flex;justify-content:center;gap:14px;margin-top:10px}
+.icons a{color:var(--ink);opacity:.85}
+.icons svg{width:22px;height:22px}
+
+/* 段落標題 */
+.head{text-align:center;display:flex;flex-direction:column;gap:2px}
+.head b{font-size:18px;font-weight:900;letter-spacing:.04em}
+.head small{font-size:13px;color:var(--muted)}
+
+/* 白色大按鈕 */
+.btn{position:relative;display:flex;align-items:center;justify-content:center;min-height:58px;padding:10px 56px;background:var(--surface);border-radius:22px;box-shadow:var(--shadow);font-size:15px;font-weight:700;text-align:center;line-height:1.4}
+.btn .ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;display:grid;place-items:center}
+.btn .ic svg{width:20px;height:20px}
+.btn small{display:block;font-size:12px;font-weight:400;color:var(--muted)}
+.btn.main{min-height:72px}
+.btn.main .ic{background:var(--line);color:#fff}
+.btns{display:flex;flex-direction:column;gap:12px}
+
+/* 分隔線：細線中間一架小飛機 */
+.sep{display:flex;align-items:center;justify-content:center;gap:12px;color:var(--ink);opacity:.75;margin-block:4px}
+.sep::before,.sep::after{content:"";width:72px;height:1.5px;background:currentColor}
+.sep svg{width:18px;height:18px}
+
+/* 商品圖磚 */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{position:relative;display:block;aspect-ratio:4/5;max-width:100%;border-radius:20px;overflow:hidden;background:var(--ph);box-shadow:var(--shadow);border:3px solid var(--surface);scroll-margin-top:20px;transition:box-shadow .3s}
+.tile.flash{box-shadow:0 0 0 3px var(--brand),0 0 0 9px rgba(52,126,134,.3)}
+.tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%}
+.tile .ph{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--num);font-weight:700;font-size:56px;color:var(--ink);opacity:.2}
+.tile::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(0,0,0,.72) 100%)}
+.tile .cap{position:absolute;left:8px;right:8px;bottom:9px;z-index:1;color:#fff;text-align:center;font-size:14px;font-weight:700;line-height:1.4;text-shadow:0 1px 3px rgba(0,0,0,.35)}
+.tile .cap small{display:block;font-size:11.5px;font-weight:500;opacity:.92}
+.tile .no{position:absolute;left:8px;top:8px;z-index:1;background:rgba(0,0,0,.55);color:#fff;font-family:var(--num);font-weight:700;font-size:14px;line-height:1;border-radius:6px;padding:4px 6px 3px}
+.tile .end{position:absolute;right:8px;top:8px;z-index:1;background:var(--hot);color:#fff;font-size:11.5px;font-weight:700;border-radius:999px;padding:1px 9px}
+.empty{grid-column:1/-1;text-align:center;font-size:13.5px;color:var(--muted);background:var(--surface);border-radius:20px;padding:20px 12px}
+
+/* 頻道數字磚 */
+.follow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fl{--c:var(--brand);--on:#fff;display:flex;flex-direction:column;gap:6px;background:var(--surface);border-radius:20px;box-shadow:var(--shadow);padding:12px 12px 12px 14px;min-width:0}
+.fl .top{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.fl .p{font-size:13px;font-weight:700;color:var(--muted)}
+.fl .lg{width:30px;height:30px;border-radius:9px;background:var(--c);color:var(--on);display:grid;place-items:center;flex:none}
+.fl .lg svg{width:17px;height:17px}
+.fl .n{font-family:var(--num);font-size:30px;font-weight:700;line-height:1.05;letter-spacing:.01em}
+.fl .n small{font-family:var(--font);font-size:12.5px;font-weight:500;color:var(--muted);margin-left:4px;letter-spacing:0}
+.fl .h{font-size:14px;font-weight:700;line-height:1.4}
+.fl .go{align-self:flex-start;font-size:12.5px;font-weight:700;color:var(--on);background:var(--c);border-radius:999px;padding:3px 13px}
+.fl.wide{grid-column:1/-1}
+.fl-blog{--c:var(--brand);--on:var(--brand-ink)}
+.fl-yt{--c:var(--yt)} .fl-fb{--c:var(--fb)} .fl-ig{--c:var(--ig)} .fl-xhs{--c:var(--xhs)}
+.fl-threads,.fl-tt{--c:var(--ink);--on:var(--bg)}
+
+/* 最新影片卡 */
+.vids{display:flex;flex-direction:column;gap:14px}
+.vid{position:relative;display:block;aspect-ratio:16/9;max-width:100%;border-radius:20px;overflow:hidden;background:var(--ph);box-shadow:var(--shadow)}
+.vid > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.vid::before{content:"";position:absolute;inset:0 0 auto;height:60%;z-index:1;background:linear-gradient(180deg,rgba(0,0,0,.7),rgba(0,0,0,0))}
+.vid .tt{position:absolute;left:12px;right:12px;top:10px;z-index:2;display:flex;gap:9px;align-items:center;color:#fff}
+.vid .tt img{width:32px;height:32px;border-radius:50%;flex:none;background:#fff}
+.vid .tt span{min-width:0;font-size:14px;font-weight:700;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.vid .play{position:absolute;left:50%;top:55%;transform:translate(-50%,-50%);z-index:2;width:62px;height:44px;border-radius:12px;background:#FF0033;display:grid;place-items:center}
+.vid .play svg{width:22px;height:22px;color:#fff}
+
+/* 合作 */
+.mail{display:flex;align-items:center;gap:8px;background:var(--surface);border-radius:22px;box-shadow:var(--shadow);padding:8px 8px 8px 18px}
+.mail span{flex:1;min-width:0;font-size:15px;font-weight:500;user-select:all;-webkit-user-select:all;overflow-wrap:anywhere}
+.mail button{flex:none;border:0;background:var(--brand);color:var(--brand-ink);border-radius:999px;padding:7px 16px;font-size:13px;font-weight:700;cursor:pointer}
+.fine{font-size:11.5px;color:var(--muted);text-align:center;margin:0}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);font-size:13.5px;border-radius:999px;padding:8px 16px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:calc(100% - 32px);text-align:center;z-index:9}
+.toast.on{opacity:1}
+@media (prefers-reduced-motion: reduce){.tile,.toast{transition:none}}
+</style>
+</head>
+<body>
+<main class="page">
+
+  <header class="hero">
+    <img src="avatar.jpg" alt="卡夫卡愛旅行" width="104" height="104">
+    <h1>卡夫卡愛旅行</h1>
+    <p>食尚玩家旅宿大賞評審・Yahoo 旅遊專欄作家</p>
+    <nav class="icons" aria-label="我們的頻道" id="icons"></nav>
+  </header>
+
+  <section class="btns" aria-labelledby="hi-h">
+    <div class="head">
+      <b id="hi-h">影片裡的好物，點圖就能買 ⤵︎</b>
+      <small>想問哪裡買、團購有問題，私訊 LINE 問我們喔</small>
+    </div>
+    <a class="btn main" href="https://lin.ee/uaWAxc5" target="_blank" rel="noopener">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 3.9 3.5 7.2 8.3 7.9.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.5s5.9-3.5 8.1-6C21.4 14.2 22 12.7 22 11c0-4.4-4.5-8-10-8Zm-3.6 10.6H6.4a.5.5 0 0 1-.5-.5V9a.5.5 0 0 1 1 0v3.6h1.5a.5.5 0 0 1 0 1Zm2-.5a.5.5 0 0 1-1 0V9a.5.5 0 0 1 1 0v4.1Zm4.8 0a.5.5 0 0 1-.9.3l-2-2.8v2.5a.5.5 0 0 1-1 0V9a.5.5 0 0 1 .9-.3l2 2.8V9a.5.5 0 0 1 1 0v4.1Zm3.3-2.6a.5.5 0 0 1 0 1h-1.5v1h1.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5V9a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-1.5v1h1.5Z"/></svg></span>
+      <span>LINE 官方帳號<small>團購、合作都可以私訊這裡</small></span>
+    </a>
+  </section>
+
+  <div class="sep" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 15.5v-1.8l-8-5V3.5a1.5 1.5 0 0 0-3 0v5.2l-8 5v1.8l8-2.5v5.5l-2 1.5v1.5l3.5-1 3.5 1v-1.5l-2-1.5V13l8 2.5Z"/></svg></div>
+
+  <section aria-labelledby="live-h" id="live-sec" hidden>
+    <div class="head" style="margin-bottom:12px">
+      <b id="live-h">期間限定團購中</b>
+      <small>截止日寫在名稱後面，時間到就收起來囉</small>
+    </div>
+    <div class="tiles" id="live"></div>
+  </section>
+
+  <section aria-labelledby="long-h">
+    <div class="head" style="margin-bottom:12px">
+      <b id="long-h">隨時都買得到</b>
+      <small>影片裡出現的好物，點圖直接下單</small>
+    </div>
+    <div class="tiles" id="long"><div class="empty">商品清單讀取中…</div></div>
+  </section>
+
+  <div class="sep" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 15.5v-1.8l-8-5V3.5a1.5 1.5 0 0 0-3 0v5.2l-8 5v1.8l8-2.5v5.5l-2 1.5v1.5l3.5-1 3.5 1v-1.5l-2-1.5V13l8 2.5Z"/></svg></div>
+
+  <section aria-labelledby="ch-h">
+    <div class="head" style="margin-bottom:12px"><b id="ch-h">跟著卡夫卡一起去旅行</b></div>
+    <div class="follow" id="list"></div>
+  </section>
+
+  <section aria-labelledby="v-h">
+    <div class="head" style="margin-bottom:12px"><b id="v-h">最新影片</b></div>
+    <div class="vids" id="vids"></div>
+  </section>
+
+  <div class="sep" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 15.5v-1.8l-8-5V3.5a1.5 1.5 0 0 0-3 0v5.2l-8 5v1.8l8-2.5v5.5l-2 1.5v1.5l3.5-1 3.5 1v-1.5l-2-1.5V13l8 2.5Z"/></svg></div>
+
+  <section class="btns" aria-labelledby="co-h">
+    <div class="head"><b id="co-h">合作邀約</b><small>店家、品牌想找我們合作，歡迎來信喔</small></div>
+    <div class="mail"><span>twkafka@gmail.com</span><button type="button" id="copymail">複製</button></div>
+    <a class="btn" href="https://kafu.tw/kafkalin/" target="_blank" rel="noopener">看我們的合作提案</a>
+  </section>
+
+  <p class="fine">© 卡夫卡愛旅行・kafu.tw</p>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* 商品清單來自 Google 試算表「卡夫卡好物連結頁｜商品清單」，小臻改試算表就會更新；
+   欄位用標題名稱對應，順序調整不影響。讀不到時用這台裝置上次成功讀到的版本。 */
+const SHEET_ID = '1TE0iPbRxsFdud-o5_Xd_Cs1blXWQqFU8mxaKve-DynE';
+const SHEET_CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=1`;
+const CACHE_KEY = 'kafu-links-items-v2';
+
+const CHANNELS = [
+  { k:'blog', name:'部落格 kafu.tw', n:'近 2,000', unit:'篇吃喝玩樂', cta:'出門前先查', url:'https://kafu.tw/', wide:true },
+  { k:'yt', name:'YouTube', n:'251 萬', unit:'次觀看', cta:'訂閱', url:'https://www.youtube.com/channel/UCqrIaayLSSFAxk2z9hRrJ5A?sub_confirmation=1' },
+  { k:'fb', name:'Facebook', n:'7.5 萬', unit:'粉絲', cta:'追蹤', url:'https://www.facebook.com/mrkafkalin' },
+  { k:'threads', name:'Threads', n:'1.3 萬', unit:'粉絲', cta:'追蹤', url:'https://www.threads.com/@yilan_kafka' },
+  { k:'tt', name:'TikTok', n:'15 萬', unit:'個讚', cta:'追蹤', url:'https://www.tiktok.com/@kafkalin' },
+  { k:'ig', name:'Instagram', n:'3.6 萬', unit:'粉絲', cta:'追蹤', url:'https://www.instagram.com/yilan_kafka/' },
+  { k:'xhs', name:'小紅書', n:'', hook:'宜蘭台北吃喝玩樂', cta:'關注', url:'https://www.xiaohongshu.com/user/profile/6395a3820000000026011876' },
+];
+
+/* 最新影片：先讀 videos.json（由 fetch_videos.py 更新），讀不到就用這裡的兩支 */
+const VIDEOS = [
+  { id:'Lb-H9Bln1Zs', title:'北海道新千歲機場怎麼逛？拉麵、霜淇淋、看飛機，等飛機也能玩半天｜北海道親子' },
+  { id:'USJ1p6_QHXU', title:'宜蘭2天1夜這樣玩！在地人推薦綠色景點、環保旅宿、綠食飯桌，出遊也能輕鬆實踐低碳旅行' },
+];
+
+const ICON = {
+  blog:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg>',
+  ig:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/></svg>',
+  fb:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.6-1.5h1.6V4.4c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4.1v2.1H7.7v3h2.6V21h3.2Z"/></svg>',
+  yt:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 7.2a2.6 2.6 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.6 2.6 0 0 0 2.4 7.2 27 27 0 0 0 2 12a27 27 0 0 0 .4 4.8 2.6 2.6 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.6 2.6 0 0 0 1.8-1.8A27 27 0 0 0 22 12a27 27 0 0 0-.4-4.8ZM10 15V9l5.2 3L10 15Z"/></svg>',
+  threads:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17.5 8.5C16.6 5.6 14.6 4 12 4 7.6 4 5 7.2 5 12s2.6 8 7 8c3.4 0 6-2 6-5 0-2.6-2-4.2-5.2-4.2-2.6 0-4.3 1.2-4.3 3 0 1.5 1.2 2.6 3 2.6 2.6 0 4-2 4-5.4"/></svg>',
+  tt:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 3c.3 2.1 1.6 3.5 3.6 3.7v3.1c-1.3.1-2.5-.3-3.6-1v6.4c0 3.6-2.6 5.8-5.7 5.8-3.3 0-5.7-2.6-5.4-5.9.3-2.9 2.8-5 6-4.7v3.2c-1.4-.3-2.8.5-3 1.9-.2 1.5.9 2.6 2.4 2.6 1.4 0 2.5-1 2.5-2.9V3h3.2Z"/></svg>',
+  xhs:'<svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4" fill="currentColor"/><text x="12" y="15.3" text-anchor="middle" font-size="8.5" font-weight="700" fill="var(--bg)" font-family="Noto Sans TC,sans-serif">小紅書</text></svg>',
+  play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>',
+};
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const safeUrl = u => /^https?:\/\//i.test(u || '') ? u : '';
+const AVATAR = document.querySelector('.hero img').getAttribute('src');
+let ITEMS = [];
+
+/* ---------- 讀試算表 ---------- */
+function parseCSV(text){
+  const rows = []; let row = [], cell = '', q = false;
+  for (let i = 0; i < text.length; i++){
+    const c = text[i];
+    if (q){
+      if (c === '"'){ if (text[i+1] === '"'){ cell += '"'; i++; } else q = false; }
+      else cell += c;
+    } else if (c === '"') q = true;
+    else if (c === ',') { row.push(cell); cell = ''; }
+    else if (c === '\n' || c === '\r'){
+      if (c === '\r' && text[i+1] === '\n') i++;
+      row.push(cell); rows.push(row); row = []; cell = '';
+    } else cell += c;
+  }
+  if (cell !== '' || row.length){ row.push(cell); rows.push(row); }
+  return rows;
+}
+function ytId(url){
+  const m = /(?:youtu\.be\/|youtube\.com\/(?:shorts\/|watch\?(?:.*&)?v=|embed\/|live\/))([\w-]{11})/.exec(url || '');
+  return m ? m[1] : '';
+}
+function parseDate(s){
+  const m = /(\d{4})\D(\d{1,2})\D(\d{1,2})/.exec(s || '');
+  return m ? new Date(+m[1], +m[2]-1, +m[3], 23, 59, 59) : null;
+}
+function toItems(rows){
+  const head = (rows.shift() || []).map(h => h.trim());
+  const col = name => head.findIndex(h => h.startsWith(name));
+  const C = { no:col('編號'), name:col('商品名'), video:col('YT'), status:col('狀態'), until:col('團購截止'),
+    code:head.findIndex(h => h === '折扣碼'), url:col('按鈕1連結'), cover:col('封面圖') };
+  const g = (r, k) => C[k] >= 0 ? (r[C[k]] || '').trim() : '';
+  return rows.map(r => {
+    const name = g(r,'name'); if (!name) return null;
+    const st = g(r,'status');
+    return {
+      no: g(r,'no').replace(/\D/g,''), name, video: safeUrl(g(r,'video')), url: safeUrl(g(r,'url')),
+      status: /團購/.test(st) ? 'live' : /結束|下架/.test(st) ? 'ended' : 'long',
+      until: g(r,'until'), code: g(r,'code'), cover: safeUrl(g(r,'cover')),
+    };
+  }).filter(Boolean).sort((a, b) => (+b.no || 0) - (+a.no || 0));
+}
+
+/* ---------- 畫面 ---------- */
+function isOpen(it){
+  if (it.status === 'ended') return false;
+  if (it.status === 'live'){ const end = parseDate(it.until); return !end || end >= new Date(); }
+  return true;
+}
+function tile(it){
+  const id = ytId(it.video);
+  const src = it.cover || (id ? `https://i.ytimg.com/vi/${id}/oar2.jpg` : '');
+  const fallback = id && !it.cover ? `if(!this.dataset.f){this.dataset.f=1;this.src='https://i.ytimg.com/vi/${id}/hqdefault.jpg'}else this.remove()` : 'this.remove()';
+  const end = it.status === 'live' ? parseDate(it.until) : null;
+  const left = end ? Math.ceil((end - new Date()) / 86400000) - 1 : null;
+  const date = end ? `～${end.getMonth()+1}/${end.getDate()}` : '';
+  return `<a class="tile"${it.no ? ` id="${esc(it.no)}"` : ''} href="${esc(it.url || it.video || '#')}" target="_blank" rel="noopener sponsored">
+    <span class="ph">${esc(it.no)}</span>
+    ${src ? `<img src="${esc(src)}" alt="" loading="lazy" onerror="${fallback}">` : ''}
+    ${it.no ? `<span class="no">No.${esc(it.no)}</span>` : ''}
+    ${left !== null && left <= 3 ? `<span class="end">${left <= 0 ? '今天截止' : `剩 ${left} 天`}</span>` : ''}
+    <span class="cap">${esc(it.name)}${esc(date)}${it.code ? `<small>折扣碼 ${esc(it.code)}</small>` : ''}</span>
+  </a>`;
+}
+function render(){
+  const open = ITEMS.filter(isOpen);
+  const live = open.filter(it => it.status === 'live'), long = open.filter(it => it.status === 'long');
+  $('#live-sec').hidden = !live.length;
+  $('#live').innerHTML = live.map(tile).join('');
+  $('#long').innerHTML = long.length ? long.map(tile).join('')
+    : `<div class="empty">${ITEMS.length ? '目前沒有上架的商品，想找什麼可以私訊 LINE 問我們喔' : '商品清單暫時讀不到，可以先私訊 LINE 問我們喔'}</div>`;
+}
+function flash(no){
+  const el = document.getElementById(no);
+  if (!el) return;
+  el.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'center'});
+  el.classList.add('flash');
+  setTimeout(() => el.classList.remove('flash'), 2600);
+}
+let toastT;
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2000);
+}
+
+$('#icons').innerHTML = CHANNELS.filter(c => c.k !== 'blog').map(c => `<a href="${c.url}" target="_blank" rel="noopener" aria-label="${esc(c.name)}">${ICON[c.k]}</a>`).join('');
+$('#list').innerHTML = CHANNELS.map(c => `<a class="fl fl-${c.k}${c.wide ? ' wide' : ''}" href="${c.url}" target="_blank" rel="noopener">
+  <span class="top"><span class="p">${esc(c.name)}</span><span class="lg">${ICON[c.k]}</span></span>
+  ${c.n ? `<span class="n">${esc(c.n)}<small>${esc(c.unit)}</small></span>` : `<span class="h">${esc(c.hook)}</span>`}
+  <span class="go">${esc(c.cta)} ›</span></a>`).join('');
+function renderVideos(list){ $('#vids').innerHTML = list.map(v => `<a class="vid" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener">
+  <img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="" loading="lazy">
+  <span class="tt"><img src="${AVATAR}" alt=""><span>${esc(v.title)}</span></span>
+  <span class="play">${ICON.play}</span></a>`).join(''); }
+renderVideos(VIDEOS);
+fetch('videos.json', {cache:'no-cache'}).then(r => r.ok ? r.json() : null)
+  .then(list => { if (Array.isArray(list) && list.length) renderVideos(list); }).catch(() => {});
+$('#copymail').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText('twkafka@gmail.com'); toast('已複製 Email'); }
+  catch { toast('請長按信箱自己複製'); }
+});
+
+function afterLoad(){
+  render();
+  const m = /^#p?(\d+)$/.exec(location.hash);
+  if (m) setTimeout(() => flash(String(+m[1])), 250);
+}
+try { ITEMS = JSON.parse(localStorage.getItem(CACHE_KEY) || '[]'); } catch { ITEMS = []; }
+if (ITEMS.length) render();
+fetch(SHEET_CSV + '&t=' + Date.now(), {cache:'no-store'})
+  .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+  .then(t => {
+    const items = toItems(parseCSV(t));
+    if (items.length){ ITEMS = items; try { localStorage.setItem(CACHE_KEY, JSON.stringify(items)); } catch {} }
+  })
+  .catch(() => {})
+  .finally(afterLoad);
+</script>
+</body>
+</html>
