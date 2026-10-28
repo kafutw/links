@@ -195,8 +195,10 @@ svg{display:block}
 /* 商品清單來自 Google 試算表「卡夫卡好物連結頁｜商品清單」，小臻改試算表就會更新；
    欄位用標題名稱對應，順序調整不影響。讀不到時用這台裝置上次成功讀到的版本。 */
 const SHEET_ID = '1TE0iPbRxsFdud-o5_Xd_Cs1blXWQqFU8mxaKve-DynE';
-const SHEET_CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=1`;
+const SHEET_CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=1&gid=800067636`;
 const CACHE_KEY = 'kafu-links-items-v2';
+/* 點擊統計：試算表裡的 Apps Script，收到編號就在那一列「點擊數」加 1，並記一筆到「點擊紀錄」分頁 */
+const CLICK_URL = '';
 
 const CHANNELS = [
   { k:'blog', name:'部落格 kafu.tw', n:'近 2,000', unit:'篇吃喝玩樂', cta:'出門前先查', url:'https://kafu.tw/', wide:true },
@@ -287,7 +289,7 @@ function tile(it){
   const end = it.status === 'live' ? parseDate(it.until) : null;
   const left = end ? Math.ceil((end - new Date()) / 86400000) - 1 : null;
   const date = end ? `～${end.getMonth()+1}/${end.getDate()}` : '';
-  return `<a class="tile"${it.no ? ` id="${esc(it.no)}"` : ''} href="${esc(it.url || it.video || '#')}" target="_blank" rel="noopener sponsored">
+  return `<a class="tile"${it.no ? ` id="${esc(it.no)}" data-no="${esc(it.no)}"` : ''} href="${esc(it.url || it.video || '#')}" target="_blank" rel="noopener sponsored">
     <span class="ph">${esc(it.no)}</span>
     ${src ? `<img src="${esc(src)}" alt="" loading="lazy" onerror="${fallback}">` : ''}
     ${it.no ? `<span class="no">No.${esc(it.no)}</span>` : ''}
@@ -332,6 +334,16 @@ $('#copymail').addEventListener('click', async () => {
   try { await navigator.clipboard.writeText('twkafka@gmail.com'); toast('已複製 Email'); }
   catch { toast('請長按信箱自己複製'); }
 });
+
+function track(no){
+  if (!CLICK_URL || !no) return;
+  const url = `${CLICK_URL}?no=${encodeURIComponent(no)}`;
+  try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch {}
+  fetch(url, {method:'POST', mode:'no-cors', keepalive:true}).catch(() => {});
+}
+['#live', '#long'].forEach(sel => $(sel).addEventListener('click', e => {
+  const t = e.target.closest('.tile'); if (t) track(t.dataset.no);
+}));
 
 function afterLoad(){
   render();
