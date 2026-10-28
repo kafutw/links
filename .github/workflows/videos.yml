@@ -1,6 +1,8 @@
 name: 更新最新影片
 on:
-  workflow_dispatch:   # 先只開手動觸發；要不要每天自動跑、幾點跑，等他決定
+  schedule:
+    - cron: '0 22 * * *'   # 每天台灣時間早上 6 點（他 10/28 指定）
+  workflow_dispatch:
 permissions:
   contents: write
 jobs:
