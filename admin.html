@@ -97,7 +97,6 @@ input:focus{border-color:var(--brand);outline:none}
 .tile::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(0,0,0,.72) 100%)}
 .tile .cap{position:absolute;left:8px;right:8px;bottom:9px;z-index:1;color:#fff;text-align:center;font-size:14px;font-weight:700;line-height:1.4;text-shadow:0 1px 3px rgba(0,0,0,.35)}
 .tile .cap small{display:block;font-size:11.5px;font-weight:500;opacity:.92}
-.tile .no{position:absolute;left:8px;top:8px;z-index:1;background:rgba(0,0,0,.55);color:#fff;font-family:var(--num);font-weight:700;font-size:14px;line-height:1;border-radius:6px;padding:4px 6px 3px}
 .tile .end{position:absolute;right:8px;top:8px;z-index:1;background:var(--hot);color:#fff;font-size:11.5px;font-weight:700;border-radius:999px;padding:1px 9px}
 .tile.off{filter:grayscale(1);opacity:.6}
 .pv p{margin:8px 2px 0;font-size:12px;color:var(--muted);text-align:center}
@@ -136,10 +135,8 @@ input:focus{border-color:var(--brand);outline:none}
   <div class="grid">
     <div class="card">
       <form id="f" novalidate>
-        <div class="row">
-          <label class="f"><span>編號<em>＊</em></span><input id="no" type="number" inputmode="numeric" min="1" required><small id="noHint">影片封面上的數字</small></label>
-          <label class="f"><span>商品名<em>＊</em></span><input id="name" type="text" required maxlength="40" placeholder="例如：歌林雙門冰箱"></label>
-        </div>
+        <input id="no" type="hidden">
+        <label class="f"><span>商品名<em>＊</em></span><input id="name" type="text" required maxlength="40" placeholder="例如：KOLIN Plus 小冰條｜120L 直立式冷凍櫃"></label>
 
         <div class="f">
           <span>狀態<em>＊</em></span>
@@ -256,7 +253,7 @@ function isOff(it){
 
 /* ---------- 預覽卡 ---------- */
 function readForm(){
-  return { no: $('#no').value.replace(/\D/g,''), name: $('#name').value.trim(), url: $('#url').value.trim(),
+  return { no: $('#no').value.replace(/\D/g,'') || String(nextNo()), name: $('#name').value.trim(), url: $('#url').value.trim(),
     code: $('#code').value.trim(), video: $('#video').value.trim(), until: $('#until').value,
     status: document.querySelector('input[name=status]:checked').value };
 }
@@ -270,9 +267,8 @@ function preview(){
   const left = end ? Math.ceil((end - new Date()) / 86400000) - 1 : null;
   const date = end ? `～${end.getMonth()+1}/${end.getDate()}` : '';
   $('#pv').className = 'tile' + (d.status === '已結束' ? ' off' : '');
-  $('#pv').innerHTML = `<span class="ph">${esc(d.no || '?')}</span>
+  $('#pv').innerHTML = `<span class="ph"></span>
     ${src ? `<img src="${esc(src)}" alt="" onerror="this.remove()">` : ''}
-    ${d.no ? `<span class="no">No.${esc(d.no)}</span>` : ''}
     ${left !== null && left <= 3 ? `<span class="end">${left <= 0 ? '今天截止' : `剩 ${left} 天`}</span>` : ''}
     <span class="cap">${esc(d.name || '商品名')}${esc(date)}${d.code ? `<small>折扣碼 ${esc(d.code)}</small>` : ''}</span>`;
 }
@@ -319,13 +315,12 @@ $('#f').addEventListener('submit', async e => {
   const d = readForm(), key = $('#key').value.trim();
   const miss = [];
   if (!key) miss.push('通行碼');
-  if (!d.no) miss.push('編號');
   if (!d.name) miss.push('商品名');
   if (!safeUrl(d.url)) miss.push('購買連結（要 https:// 開頭）');
   if (d.video && !ytId(d.video)) miss.push('YT 影片網址看起來不對');
   if (miss.length) return say('bad', '還差：' + miss.map(esc).join('、'));
   if (!imgData && !keepCover && !ytId(d.video)) return say('bad', '沒有 YT 網址的話，要上傳一張封面圖喔');
-  const dup = ITEMS.find(it => it.no === d.no);
+  const dup = !!$('#no').value && ITEMS.find(it => it.no === d.no);
   $('#send').disabled = true; $('#send').textContent = '上架中…';
   try {
     const res = await fetch(API, { method: 'POST', body: JSON.stringify({ action: 'add', key, ...d,
@@ -334,9 +329,9 @@ $('#f').addEventListener('submit', async e => {
     if (!out.ok) throw new Error(out.error || '送出失敗');
     try { localStorage.setItem(KEY_STORE, key); } catch {}
     const link = `kafu.tw/bio#${out.no}`;
-    say('ok', `${dup ? '已更新' : '已上架'} No.${esc(out.no)}「${esc(d.name)}」，連結頁大約 1 分鐘內會出現。
+    say('ok', `${dup ? '已更新' : '已上架'}「${esc(d.name)}」，連結頁大約 1 分鐘內會出現。
       <span class="lnk">私訊可以直接貼：<code>${link}</code><button type="button" data-copy="https://${link}">複製</button></span>`);
-    imgData = null; keepCover = '';
+    imgData = null; keepCover = ''; $('#no').value = '';
     loadList();
   } catch (err) {
     say('bad', esc(err.message === 'Failed to fetch' ? '連不上 Google，檢查一下網路再試一次' : err.message));
@@ -349,21 +344,18 @@ $('#msg').addEventListener('click', async e => {
   try { await navigator.clipboard.writeText(b.dataset.copy); b.textContent = '已複製'; } catch { b.textContent = '請長按複製'; }
 });
 $('#reset').addEventListener('click', () => {
-  $('#f').reset(); imgData = null; keepCover = ''; showImg(); $('#msg').hidden = true; suggestNo(); preview();
+  $('#f').reset(); $('#no').value = ''; imgData = null; keepCover = ''; showImg(); $('#msg').hidden = true; preview();
 });
 
 /* ---------- 已上架清單 ---------- */
-function suggestNo(){
-  const max = ITEMS.reduce((m, it) => Math.max(m, +it.no || 0), 0);
-  if (!$('#no').value) $('#no').placeholder = String(max + 1);
-  $('#noHint').textContent = max ? `影片封面上的數字（目前最大是 ${max}）` : '影片封面上的數字';
-}
+/* 不用填編號：新商品自動給下一個序號（記點擊數、kafu.tw/bio#序號 直接連到這張卡用），修改時沿用原本的 */
+function nextNo(){ return ITEMS.reduce((m, it) => Math.max(m, +it.no || 0), 0) + 1; }
 function renderList(){
   $('#items').innerHTML = ITEMS.length ? ITEMS.map((it, i) => {
     const src = coverOf(it), off = isOff(it);
     const st = off ? '<span class="pill off">已下架</span>' : /團購/.test(it.status) ? `<span class="pill live">團購中${it.until ? '～' + esc(it.until) : ''}</span>` : '<span class="pill">隨時可買</span>';
     return `<div class="it"><span class="th">${src ? `<img src="${esc(src)}" alt="" loading="lazy" onerror="this.remove()">` : ''}</span>
-      <span style="min-width:0"><b><span class="n">No.${esc(it.no)}</span>${esc(it.name)}</b><small>${st} ${it.code ? '折扣碼 ' + esc(it.code) : ''}</small></span>
+      <span style="min-width:0"><b>${esc(it.name)}</b><small>${st} ${it.code ? '折扣碼 ' + esc(it.code) : ''}</small></span>
       <button type="button" data-i="${i}">修改</button></div>`;
   }).join('') : '<div class="empty">還沒有商品，從上面新增第一筆吧</div>';
 }
@@ -382,7 +374,7 @@ function loadList(){
   const base = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=1&`;
   Promise.all(SOURCES.map(s => fetch(`${base}${s}&t=${Date.now()}`, {cache:'no-store'})
       .then(r => r.ok ? r.text() : '').then(t => t ? toItems(parseCSV(t)) : []).catch(() => [])))
-    .then(lists => { ITEMS = mergeItems(lists); renderList(); suggestNo(); });
+    .then(lists => { ITEMS = mergeItems(lists); renderList(); });
 }
 
 try { $('#key').value = localStorage.getItem(KEY_STORE) || ''; } catch {}
