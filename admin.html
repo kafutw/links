@@ -14,7 +14,7 @@
 :root{
   --bg:#EAEDEC; --surface:#FFFFFF; --ink:#1A2526; --muted:#667577; --rule:#D3DBDA;
   --brand:#347E86; --brand-ink:#FFFFFF; --soft:#E1EEED;
-  --hot:#D4621B; --ok:#1F7A4D; --ok-soft:#E3F3EA; --bad:#B3261E; --bad-soft:#FBE7E5;
+  --hot:#D4621B; --hot-soft:#FBEBDD; --tint:#F1F5F4; --ok:#1F7A4D; --ok-soft:#E3F3EA; --bad:#B3261E; --bad-soft:#FBE7E5;
   --ph:#CBD6D5; --shadow:0 1px 2px rgba(20,40,40,.06),0 4px 14px rgba(20,40,40,.06);
   --font:"Noto Sans TC","PingFang TC","Heiti TC","Microsoft JhengHei",sans-serif;
   --num:"Barlow Condensed","Arial Narrow",var(--font);
@@ -23,7 +23,7 @@
 @media (prefers-color-scheme: dark){:root{
   --bg:#111819; --surface:#1B2426; --ink:#E6EEEE; --muted:#9AAAAB; --rule:#2F3B3D;
   --brand:#5FB0B8; --brand-ink:#0F1819; --soft:#1F3133;
-  --hot:#F29A55; --ok:#5CCB8F; --ok-soft:#173326; --bad:#FF8A80; --bad-soft:#3A1F1D;
+  --hot:#F29A55; --hot-soft:#3A2A1B; --tint:#E9EFEE; --ok:#5CCB8F; --ok-soft:#173326; --bad:#FF8A80; --bad-soft:#3A1F1D;
   --ph:#2A3A3B; --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark}}
 
 *{box-sizing:border-box}
@@ -49,8 +49,8 @@ header a{font-size:14px;font-weight:700;text-decoration:none}
 .key input{flex:1;min-width:140px}
 .key small{color:var(--muted);font-size:12.5px;flex-basis:100%}
 
-.grid{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:20px;align-items:start}
-@media (max-width:700px){.grid{grid-template-columns:1fr}.pv{order:-1;max-width:240px;margin:0 auto;width:100%}}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
+@media (max-width:760px){.grid{grid-template-columns:1fr}.pv{order:-1;max-width:420px;margin:0 auto;width:100%}}
 
 form{display:flex;flex-direction:column;gap:14px}
 .row{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px}
@@ -91,13 +91,21 @@ input:focus{border-color:var(--brand);outline:none}
 
 /* 預覽卡：跟連結頁上的商品圖磚同一套樣式 */
 .pv h2,.list h2{margin:0 0 10px;font-size:13px;letter-spacing:.14em;color:var(--muted)}
-.tile{position:relative;display:block;aspect-ratio:4/5;max-width:100%;border-radius:20px;overflow:hidden;background:var(--ph);box-shadow:var(--shadow);border:3px solid var(--surface)}
-.tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%}
-.tile .ph{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--num);font-weight:700;font-size:56px;color:var(--ink);opacity:.2}
-.tile::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(0,0,0,.72) 100%)}
-.tile .cap{position:absolute;left:8px;right:8px;bottom:9px;z-index:1;color:#fff;text-align:center;font-size:14px;font-weight:700;line-height:1.4;text-shadow:0 1px 3px rgba(0,0,0,.35)}
-.tile .cap small{display:block;font-size:11.5px;font-weight:500;opacity:.92}
-.tile .end{position:absolute;right:8px;top:8px;z-index:1;background:var(--hot);color:#fff;font-size:11.5px;font-weight:700;border-radius:999px;padding:1px 9px}
+/* 預覽卡：跟連結頁一樣的橫式卡（7 號淺色底框） */
+.tile{display:grid;grid-template-columns:112px minmax(0,1fr);gap:12px;background:var(--surface);border-radius:18px;padding:10px;box-shadow:var(--shadow)}
+.tile .im{width:112px;height:140px;border-radius:12px;overflow:hidden;background:var(--tint);display:grid;place-items:center}
+.tile .im img{width:100%;height:100%}
+.tile .im img.prod{object-fit:contain;padding:4px}
+.tile .im img.photo{object-fit:cover;object-position:50% 40%}
+.tile .t{display:flex;flex-direction:column;gap:6px;min-width:0;padding-block:2px}
+.tile .cap{font-size:15px;font-weight:700;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tile .meta{display:flex;flex-wrap:wrap;gap:6px}
+.tile .pl{display:inline-block;font-size:11.5px;font-weight:700;border-radius:999px;padding:1px 9px;background:var(--soft);color:var(--brand)}
+.tile .pl.live{background:var(--hot-soft);color:var(--hot)}
+.tile .pl.end{background:var(--hot);color:#fff}
+.tile .code{font-size:12.5px;color:var(--muted)}
+.tile .code b{color:var(--ink)}
+.tile .go{margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:999px;background:var(--brand);color:var(--brand-ink);font-weight:700;font-size:13.5px}
 .tile.off{filter:grayscale(1);opacity:.6}
 .pv p{margin:8px 2px 0;font-size:12px;color:var(--muted);text-align:center}
 
@@ -177,7 +185,7 @@ input:focus{border-color:var(--brand);outline:none}
     <div class="pv">
       <h2>連結頁上會長這樣</h2>
       <div class="tile" id="pv"></div>
-      <p>點這張卡會直接打開購買連結</p>
+      <p>點這張卡會直接打開購買連結；有上傳商品圖（去背的最好看）就用商品圖，沒有就用 YT 縮圖</p>
     </div>
   </div>
 
@@ -267,10 +275,13 @@ function preview(){
   const left = end ? Math.ceil((end - new Date()) / 86400000) - 1 : null;
   const date = end ? `～${end.getMonth()+1}/${end.getDate()}` : '';
   $('#pv').className = 'tile' + (d.status === '已結束' ? ' off' : '');
-  $('#pv').innerHTML = `<span class="ph"></span>
-    ${src ? `<img src="${esc(src)}" alt="" onerror="this.remove()">` : ''}
-    ${left !== null && left <= 3 ? `<span class="end">${left <= 0 ? '今天截止' : `剩 ${left} 天`}</span>` : ''}
-    <span class="cap">${esc(d.name || '商品名')}${esc(date)}${d.code ? `<small>折扣碼 ${esc(d.code)}</small>` : ''}</span>`;
+  const isProd = !imgData && !!keepCover || !!imgData;
+  const pill = live ? `<span class="pl live">團購中${esc(date)}</span>` : d.status === '已結束' ? '<span class="pl">下架</span>' : '<span class="pl">隨時可買</span>';
+  $('#pv').innerHTML = `<span class="im">${src ? `<img class="${isProd ? 'prod' : 'photo'}" src="${esc(src)}" alt="" onerror="this.remove()">` : ''}</span>
+    <span class="t"><span class="cap">${esc(d.name || '商品名')}</span>
+      <span class="meta">${pill}${left !== null && left <= 3 ? `<span class="pl end">${left <= 0 ? '今天截止' : `剩 ${left} 天`}</span>` : ''}</span>
+      ${d.code ? `<span class="code">折扣碼 <b>${esc(d.code)}</b></span>` : ''}
+      <span class="go">去購買 ›</span></span>`;
 }
 
 /* ---------- 封面圖：在瀏覽器裡先縮到 1080 寬再送，省流量也比較快 ---------- */

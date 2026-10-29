@@ -19,7 +19,7 @@
 :root{
   --bg:#EAEDEC; --surface:#FFFFFF; --ink:#1A2526; --muted:#667577; --rule:#D9DFDE;
   --brand:#347E86; --brand-ink:#FFFFFF; --line:#06C755;
-  --hot:#D4621B;
+  --hot:#D4621B; --hot-soft:#FBEBDD; --soft:#E1EEED; --tint:#F1F5F4;
   --yt:#E5002D; --fb:#1877F2; --ig:#D62E6F; --xhs:#FF2442;
   --shadow:0 1px 2px rgba(20,40,40,.06),0 4px 14px rgba(20,40,40,.06);
   --ph:#CBD6D5;
@@ -30,7 +30,7 @@
 @media (prefers-color-scheme: dark){:root{
   --bg:#111819; --surface:#1B2426; --ink:#E6EEEE; --muted:#9AAAAB; --rule:#2B3638;
   --brand:#5FB0B8; --brand-ink:#0F1819; --line:#2BD46F;
-  --hot:#F29A55;
+  --hot:#F29A55; --hot-soft:#3A2A1B; --soft:#1F3133; --tint:#E9EFEE;
   --yt:#FF4D6A; --fb:#4D9BFF; --ig:#F06398; --xhs:#FF5C73;
   --shadow:0 1px 2px rgba(0,0,0,.3); --ph:#2A3A3B; color-scheme:dark}}
 
@@ -77,15 +77,24 @@ svg{display:block}
 .sep svg{width:18px;height:18px}
 
 /* 商品圖磚 */
-.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.tile{position:relative;display:block;aspect-ratio:4/5;max-width:100%;border-radius:20px;overflow:hidden;background:var(--ph);box-shadow:var(--shadow);border:3px solid var(--surface);scroll-margin-top:20px;transition:box-shadow .3s}
+.tiles{display:flex;flex-direction:column;gap:12px}
+/* 商品卡：橫式清單卡（10/29 他從五種候選選 1）＝左邊直式小圖、右邊名稱＋狀態＋按鈕，封面不壓暗 */
+.tile{display:grid;grid-template-columns:112px minmax(0,1fr);gap:12px;background:var(--surface);border-radius:18px;padding:10px;box-shadow:var(--shadow);scroll-margin-top:20px;transition:box-shadow .3s}
 .tile.flash{box-shadow:0 0 0 3px var(--brand),0 0 0 9px rgba(52,126,134,.3)}
-.tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%}
-.tile .ph{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--num);font-weight:700;font-size:56px;color:var(--ink);opacity:.2}
-.tile::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(0,0,0,.72) 100%)}
-.tile .cap{position:absolute;left:8px;right:8px;bottom:9px;z-index:1;color:#fff;text-align:center;font-size:14px;font-weight:700;line-height:1.4;text-shadow:0 1px 3px rgba(0,0,0,.35)}
-.tile .cap small{display:block;font-size:11.5px;font-weight:500;opacity:.92}
-.tile .end{position:absolute;right:8px;top:8px;z-index:1;background:var(--hot);color:#fff;font-size:11.5px;font-weight:700;border-radius:999px;padding:1px 9px}
+/* 左邊圖框（他選 7 號淺色底）：官方商品圖去背後用 contain 放進來；沒有商品圖時退回 YT 縮圖，用 cover 填滿 */
+.tile .im{width:112px;height:140px;border-radius:12px;overflow:hidden;background:var(--tint);display:grid;place-items:center}
+.tile .im img{width:100%;height:100%}
+.tile .im img.prod{object-fit:contain;padding:4px}
+.tile .im img.photo{object-fit:cover;object-position:50% 40%}
+.tile .t{display:flex;flex-direction:column;gap:6px;min-width:0;padding-block:2px}
+.tile .cap{font-size:15px;font-weight:700;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tile .meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tile .pill{display:inline-block;font-size:11.5px;font-weight:700;border-radius:999px;padding:1px 9px;background:var(--soft);color:var(--brand)}
+.tile .pill.live{background:var(--hot-soft);color:var(--hot)}
+.tile .pill.end{background:var(--hot);color:#fff}
+.tile .code{font-size:12.5px;color:var(--muted)}
+.tile .code b{color:var(--ink);letter-spacing:.04em}
+.tile .go{margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:999px;background:var(--brand);color:var(--brand-ink);font-weight:700;font-size:13.5px}
 .empty{grid-column:1/-1;text-align:center;font-size:13.5px;color:var(--muted);background:var(--surface);border-radius:20px;padding:20px 12px}
 
 /* 頻道數字磚 */
@@ -152,7 +161,7 @@ svg{display:block}
   <section aria-labelledby="live-h" id="live-sec" hidden>
     <div class="head" style="margin-bottom:12px">
       <b id="live-h">期間限定團購中</b>
-      <small>截止日寫在名稱後面，時間到就收起來囉</small>
+      <small>時間到就收起來囉</small>
     </div>
     <div class="tiles" id="live"></div>
   </section>
@@ -300,11 +309,15 @@ function tile(it){
   const end = it.status === 'live' ? parseDate(it.until) : null;
   const left = end ? Math.ceil((end - new Date()) / 86400000) - 1 : null;
   const date = end ? `～${end.getMonth()+1}/${end.getDate()}` : '';
+  const pill = it.status === 'live' ? `<span class="pill live">團購中${esc(date)}</span>` : '<span class="pill">隨時可買</span>';
   return `<a class="tile"${it.no ? ` id="${esc(it.no)}" data-no="${esc(it.no)}"` : ''} href="${esc(it.url || it.video || '#')}" target="_blank" rel="noopener sponsored">
-    <span class="ph"></span>
-    ${src ? `<img src="${esc(src)}" alt="" loading="lazy" onerror="${fallback}">` : ''}
-    ${left !== null && left <= 3 ? `<span class="end">${left <= 0 ? '今天截止' : `剩 ${left} 天`}</span>` : ''}
-    <span class="cap">${esc(it.name)}${esc(date)}${it.code ? `<small>折扣碼 ${esc(it.code)}</small>` : ''}</span>
+    <span class="im">${src ? `<img class="${it.cover ? 'prod' : 'photo'}" src="${esc(src)}" alt="" loading="lazy" onerror="${fallback}">` : ''}</span>
+    <span class="t">
+      <span class="cap">${esc(it.name)}</span>
+      <span class="meta">${pill}${left !== null && left <= 3 ? `<span class="pill end">${left <= 0 ? '今天截止' : `剩 ${left} 天`}</span>` : ''}</span>
+      ${it.code ? `<span class="code">折扣碼 <b>${esc(it.code)}</b></span>` : ''}
+      <span class="go">去購買 ›</span>
+    </span>
   </a>`;
 }
 function render(){
