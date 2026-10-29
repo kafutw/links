@@ -19,7 +19,7 @@
 :root{
   --bg:#EAEDEC; --surface:#FFFFFF; --ink:#1A2526; --muted:#667577; --rule:#D9DFDE;
   --brand:#347E86; --brand-ink:#FFFFFF; --line:#06C755;
-  --hot:#D4621B; --hot-soft:#FBEBDD; --soft:#E1EEED; --tint:#F1F5F4;
+  --hot:#D4621B; --hot-soft:#FBEBDD; --soft:#E1EEED; --tint:#F1F5F4; --edge:#CAD5D4;
   --yt:#E5002D; --fb:#1877F2; --ig:#D62E6F; --xhs:#FF2442;
   --shadow:0 1px 2px rgba(20,40,40,.06),0 4px 14px rgba(20,40,40,.06);
   --ph:#CBD6D5;
@@ -30,7 +30,7 @@
 @media (prefers-color-scheme: dark){:root{
   --bg:#111819; --surface:#1B2426; --ink:#E6EEEE; --muted:#9AAAAB; --rule:#2B3638;
   --brand:#5FB0B8; --brand-ink:#0F1819; --line:#2BD46F;
-  --hot:#F29A55; --hot-soft:#3A2A1B; --soft:#1F3133; --tint:#E9EFEE;
+  --hot:#F29A55; --hot-soft:#3A2A1B; --soft:#1F3133; --tint:#E9EFEE; --edge:#3A4A49;
   --yt:#FF4D6A; --fb:#4D9BFF; --ig:#F06398; --xhs:#FF5C73;
   --shadow:0 1px 2px rgba(0,0,0,.3); --ph:#2A3A3B; color-scheme:dark}}
 
@@ -38,7 +38,7 @@
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.6;
   padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px));
-  padding-top:max(28px,env(safe-area-inset-top,0px));padding-bottom:calc(48px + env(safe-area-inset-bottom,0px));-webkit-font-smoothing:antialiased}
+  padding-top:max(16px,env(safe-area-inset-top,0px));padding-bottom:calc(48px + env(safe-area-inset-bottom,0px));-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--brand);outline-offset:3px;border-radius:12px}
@@ -46,22 +46,40 @@ img{display:block;max-width:100%}
 svg{display:block}
 [hidden]{display:none!important}
 
-.page{max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.page{max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+/* 8 號白卡分區（10/29 他選）：每一區一張白色大卡，卡跟卡之間留灰縫；卡裡的小元件用淺色底 */
+.blk{background:var(--surface);border-radius:22px;padding:16px 14px;box-shadow:var(--shadow)}
+.hero-blk{padding-top:22px}
+.sec-t{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:12px}
+.sec-t b{font-size:17px;font-weight:900;letter-spacing:.04em}
+.sec-t b::before{content:"";display:inline-block;width:4px;height:15px;border-radius:2px;background:var(--brand);margin-right:8px;vertical-align:-1px}
+.sec-t small{font-size:12.5px;color:var(--muted);text-align:right}
+.hint{margin:10px 0 0;font-size:12.5px;color:var(--muted);text-align:center}
+.row{display:flex;align-items:center;gap:10px;margin-top:10px;background:var(--tint);border-radius:14px;padding:11px 14px}
+.row span{flex:1;min-width:0}
+.row b{display:block;font-size:14.5px}
+.row small{display:block;font-size:12.5px;color:var(--muted)}
+.row i{font-style:normal;color:var(--brand);font-weight:900;font-size:18px}
+.nums{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.nums a{background:var(--tint);border-radius:14px;padding:10px 6px;text-align:center}
+.nums b{display:block;font-family:var(--num);font-size:24px;line-height:1.1}
+.nums small{font-size:11.5px;color:var(--muted)}
 
 /* 頭部 */
 .hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px}
-.hero img{width:104px;height:104px;border-radius:50%;background:#fff;box-shadow:var(--shadow);margin-bottom:8px}
+.hero img{width:96px;height:96px;border-radius:50%;background:#fff;box-shadow:var(--shadow);margin-bottom:6px}
 .hero h1{margin:0;font-size:21px;font-weight:900;letter-spacing:.06em}
-.hero p{margin:0;font-size:12.5px;color:var(--muted)}
-/* 頭部頻道按鈕：一排三個的品牌色大按鈕＋名稱（10/29 他嫌小圓太小難按） */
-.icons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px;width:100%}
-.icons a{--c:var(--brand);height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:7px;color:#fff;background:var(--c);font-weight:700;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,.14),inset 0 0 0 1px rgba(255,255,255,.12);transition:transform .15s;min-width:0}
-.icons a:hover{transform:translateY(-2px)}
-.icons svg{width:21px;height:21px;flex:none}
+/* 兩行簡介：每行不換行，字級跟著螢幕寬度縮，確保剛好兩行 */
+.hero .bio{margin:2px 0 0;font-size:min(13px,3.5vw);line-height:1.7;color:var(--muted);white-space:nowrap}
+.hero .bio b{color:var(--ink);font-weight:700}
+/* 頭部頻道按鈕：一排三個（10/29 他選 11 號＋邊框）＝淺底、細框線、深色字，只有小圖示保留各平台顏色 */
+.icons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px;width:100%}
+.icons a{height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:7px;background:var(--tint);color:var(--ink);border:1.5px solid var(--edge);font-weight:700;font-size:14px;transition:transform .15s,border-color .15s;min-width:0}
+.icons a:hover{transform:translateY(-2px);border-color:var(--brand)}
+.icons svg{width:20px;height:20px;flex:none}
 .icons span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.icons .i-yt{--c:var(--yt)} .icons .i-fb{--c:var(--fb)} .icons .i-threads,.icons .i-tt{--c:#111}
-.icons .i-ig{background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285aeb 90%)}
-.icons .i-xhs{--c:var(--xhs)}
+.icons .i-yt svg{color:var(--yt)} .icons .i-fb svg{color:var(--fb)} .icons .i-ig svg{color:var(--ig)}
+.icons .x{display:grid;place-items:center;width:20px;height:20px;border-radius:5px;background:var(--xhs);color:#fff;font-size:9.5px;font-weight:900;font-style:normal;line-height:1;flex:none}
 @media (prefers-reduced-motion: reduce){.icons a{transition:none}}
 
 /* 段落標題 */
@@ -86,10 +104,10 @@ svg{display:block}
 /* 商品圖磚 */
 .tiles{display:flex;flex-direction:column;gap:12px}
 /* 商品卡：橫式清單卡（10/29 他從五種候選選 1）＝左邊直式小圖、右邊名稱＋狀態＋按鈕，封面不壓暗 */
-.tile{display:grid;grid-template-columns:112px minmax(0,1fr);gap:12px;background:var(--surface);border-radius:18px;padding:10px;box-shadow:var(--shadow);scroll-margin-top:20px;transition:box-shadow .3s}
+.tile{display:grid;grid-template-columns:112px minmax(0,1fr);gap:12px;background:var(--tint);border-radius:16px;padding:10px;scroll-margin-top:20px;transition:box-shadow .3s}
 .tile.flash{box-shadow:0 0 0 3px var(--brand),0 0 0 9px rgba(52,126,134,.3)}
 /* 左邊圖框（他選 7 號淺色底）：官方商品圖去背後用 contain 放進來；沒有商品圖時退回 YT 縮圖，用 cover 填滿 */
-.tile .im{width:112px;height:140px;border-radius:12px;overflow:hidden;background:var(--tint);display:grid;place-items:center}
+.tile .im{width:112px;height:140px;border-radius:12px;overflow:hidden;background:var(--surface);display:grid;place-items:center}
 .tile .im img{width:100%;height:100%}
 .tile .im img.prod{object-fit:contain;padding:4px}
 .tile .im img.photo{object-fit:cover;object-position:50% 40%}
@@ -102,7 +120,7 @@ svg{display:block}
 .tile .code{font-size:12.5px;color:var(--muted)}
 .tile .code b{color:var(--ink);letter-spacing:.04em}
 .tile .go{margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:999px;background:var(--brand);color:var(--brand-ink);font-weight:700;font-size:13.5px}
-.empty{grid-column:1/-1;text-align:center;font-size:13.5px;color:var(--muted);background:var(--surface);border-radius:20px;padding:20px 12px}
+.empty{grid-column:1/-1;text-align:center;font-size:13.5px;color:var(--muted);background:var(--tint);border-radius:16px;padding:20px 12px}
 
 /* 頻道數字磚 */
 .follow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -132,7 +150,7 @@ svg{display:block}
 .vid .play svg{width:22px;height:22px;color:#fff}
 
 /* 合作 */
-.mail{display:flex;align-items:center;gap:8px;background:var(--surface);border-radius:22px;box-shadow:var(--shadow);padding:8px 8px 8px 18px}
+.mail{display:flex;align-items:center;gap:8px;background:var(--tint);border-radius:14px;padding:8px 8px 8px 14px}
 .mail span{flex:1;min-width:0;font-size:15px;font-weight:500;user-select:all;-webkit-user-select:all;overflow-wrap:anywhere}
 .mail button{flex:none;border:0;background:var(--brand);color:var(--brand-ink);border-radius:999px;padding:7px 16px;font-size:13px;font-weight:700;cursor:pointer}
 .fine{font-size:11.5px;color:var(--muted);text-align:center;margin:0}
@@ -145,56 +163,41 @@ svg{display:block}
 <body>
 <main class="page">
 
-  <header class="hero">
-    <img src="avatar.jpg" alt="卡夫卡愛旅行" width="104" height="104">
-    <h1>卡夫卡愛旅行</h1>
-    <p>食尚玩家旅宿大賞評審・Yahoo 旅遊專欄作家</p>
-    <nav class="icons" aria-label="我們的頻道" id="icons"></nav>
-  </header>
-
-  <section class="btns" aria-labelledby="hi-h">
-    <div class="head">
-      <b id="hi-h">影片裡的好物，點圖就能買 ⤵︎</b>
-      <small>想問哪裡買、團購有問題，私訊 IG 問我們喔</small>
-    </div>
+  <section class="blk hero-blk">
+    <header class="hero">
+      <img src="avatar.jpg" alt="卡夫卡愛旅行" width="96" height="96">
+      <h1>卡夫卡愛旅行</h1>
+      <p class="bio"><b>食尚玩家旅宿大賞評審・Yahoo 旅遊專欄作家</b><br>一家人吃過、住過、玩過才分享，近 2,000 篇</p>
+      <nav class="icons" aria-label="我們的頻道" id="icons"></nav>
+    </header>
   </section>
 
-  <div class="sep" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 15.5v-1.8l-8-5V3.5a1.5 1.5 0 0 0-3 0v5.2l-8 5v1.8l8-2.5v5.5l-2 1.5v1.5l3.5-1 3.5 1v-1.5l-2-1.5V13l8 2.5Z"/></svg></div>
-
-  <section aria-labelledby="live-h" id="live-sec" hidden>
-    <div class="head" style="margin-bottom:12px">
-      <b id="live-h">期間限定團購中</b>
-      <small>時間到就收起來囉</small>
-    </div>
+  <section class="blk" aria-labelledby="live-h" id="live-sec" hidden>
+    <div class="sec-t"><b id="live-h">期間限定團購中</b><small>點圖就能買，時間到就收起來</small></div>
     <div class="tiles" id="live"></div>
   </section>
 
-  <section aria-labelledby="long-h">
-    <div class="head" style="margin-bottom:12px">
-      <b id="long-h">隨時都買得到</b>
-      <small>影片裡出現的好物，點圖直接下單</small>
-    </div>
+  <section class="blk" aria-labelledby="long-h">
+    <div class="sec-t"><b id="long-h">隨時都買得到</b><small>影片裡出現的好物</small></div>
     <div class="tiles" id="long"><div class="empty">商品清單讀取中…</div></div>
+    <p class="hint">想問哪裡買、團購有問題，私訊 IG 問我們喔</p>
   </section>
 
-  <div class="sep" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 15.5v-1.8l-8-5V3.5a1.5 1.5 0 0 0-3 0v5.2l-8 5v1.8l8-2.5v5.5l-2 1.5v1.5l3.5-1 3.5 1v-1.5l-2-1.5V13l8 2.5Z"/></svg></div>
-
-  <section aria-labelledby="ch-h">
-    <div class="head" style="margin-bottom:12px"><b id="ch-h">跟著卡夫卡一起去旅行</b></div>
-    <div class="follow" id="list"></div>
+  <section class="blk" aria-labelledby="ch-h">
+    <div class="sec-t"><b id="ch-h">跟著卡夫卡一起去旅行</b></div>
+    <div class="nums" id="list"></div>
+    <a class="row" href="https://kafu.tw/" target="_blank" rel="noopener"><span><b>部落格 kafu.tw</b><small>近 2,000 篇吃喝玩樂，出門前先查</small></span><i>›</i></a>
   </section>
 
-  <section aria-labelledby="v-h">
-    <div class="head" style="margin-bottom:12px"><b id="v-h">最新影片</b></div>
+  <section class="blk" aria-labelledby="v-h">
+    <div class="sec-t"><b id="v-h">最新影片</b><small>YouTube</small></div>
     <div class="vids" id="vids"></div>
   </section>
 
-  <div class="sep" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 15.5v-1.8l-8-5V3.5a1.5 1.5 0 0 0-3 0v5.2l-8 5v1.8l8-2.5v5.5l-2 1.5v1.5l3.5-1 3.5 1v-1.5l-2-1.5V13l8 2.5Z"/></svg></div>
-
-  <section class="btns" aria-labelledby="co-h">
-    <div class="head"><b id="co-h">合作邀約</b><small>店家、品牌想找我們合作，歡迎來信喔</small></div>
+  <section class="blk" aria-labelledby="co-h">
+    <div class="sec-t"><b id="co-h">合作邀約</b><small>店家、品牌歡迎來信</small></div>
     <div class="mail"><span>twkafka@gmail.com</span><button type="button" id="copymail">複製</button></div>
-    <a class="btn" href="https://kafu.tw/kafkalin/" target="_blank" rel="noopener">看我們的合作提案</a>
+    <a class="row" href="https://kafu.tw/kafkalin/" target="_blank" rel="noopener"><span><b>看我們的合作提案</b><small>可以合作的方式、過去的案例</small></span><i>›</i></a>
   </section>
 
   <p class="fine">© 卡夫卡愛旅行・kafu.tw</p>
@@ -345,11 +348,9 @@ function toast(msg){
 }
 
 const SHORT = { yt:'YouTube', fb:'Facebook', threads:'Threads', tt:'TikTok', ig:'Instagram', xhs:'小紅書' };
-$('#icons').innerHTML = CHANNELS.filter(c => c.k !== 'blog').map(c => `<a class="i-${c.k}" href="${c.url}" target="_blank" rel="noopener" aria-label="${esc(c.name)}">${c.k === 'xhs' ? '' : ICON[c.k]}<span>${SHORT[c.k]}</span></a>`).join('');
-$('#list').innerHTML = CHANNELS.map(c => `<a class="fl fl-${c.k}${c.wide ? ' wide' : ''}" href="${c.url}" target="_blank" rel="noopener">
-  <span class="top"><span class="p">${esc(c.name)}</span><span class="lg">${ICON[c.k]}</span></span>
-  ${c.n ? `<span class="n">${esc(c.n)}<small>${esc(c.unit)}</small></span>` : `<span class="h">${esc(c.hook)}</span>`}
-  <span class="go">${esc(c.cta)} ›</span></a>`).join('');
+$('#icons').innerHTML = CHANNELS.filter(c => c.k !== 'blog').map(c => `<a class="i-${c.k}" href="${c.url}" target="_blank" rel="noopener" aria-label="${esc(c.name)}">${c.k === 'xhs' ? '<i class="x" aria-hidden="true">紅</i>' : ICON[c.k]}<span>${SHORT[c.k]}</span></a>`).join('');
+const NUMS = [['fb','7.5 萬','Facebook 粉絲'], ['ig','3.6 萬','IG 粉絲'], ['yt','251 萬','YouTube 觀看']];
+$('#list').innerHTML = NUMS.map(([k, n, label]) => `<a href="${CHANNELS.find(c => c.k === k).url}" target="_blank" rel="noopener"><b>${n}</b><small>${label}</small></a>`).join('');
 function renderVideos(list){ $('#vids').innerHTML = list.map(v => `<a class="vid" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener">
   <img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="" loading="lazy">
   <span class="tt"><img src="${AVATAR}" alt=""><span>${esc(v.title)}</span></span>
