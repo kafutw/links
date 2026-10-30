@@ -24,7 +24,7 @@
   --shadow:0 1px 2px rgba(20,40,40,.06),0 4px 14px rgba(20,40,40,.06);
   --ph:#CBD6D5;
   --sky:#1F6FB2; --sky-ink:#FFFFFF; --sky-bg:#E4F0FB; --sky-bg2:#F5FAFE;
-  --brand-d:#245A60; --sky-d:#14507F; --soften:#FFFFFF;
+  --brand-d:#245A60; --brand-dd:#1B474C; --sky-d:#14507F; --soften:#FFFFFF;
   --font:"Noto Sans TC","PingFang TC","Heiti TC","Microsoft JhengHei",sans-serif;
   --num:"Barlow Condensed","Arial Narrow",var(--font);
   color-scheme:light;
@@ -36,7 +36,7 @@
   --yt:#FF4D6A; --fb:#4D9BFF; --ig:#F06398; --xhs:#FF5C73;
   --shadow:0 1px 2px rgba(0,0,0,.3); --ph:#2A3A3B;
   --sky:#8CC2F0; --sky-ink:#0F1819; --sky-bg:#18293A; --sky-bg2:#1B2430;
-  --brand-d:#3B7F86; --sky-d:#5A92C2; --soften:#1B2426; color-scheme:dark}}
+  --brand-d:#2F6E75; --brand-dd:#1E4A4F; --sky-d:#5A92C2; --soften:#1B2426; color-scheme:dark}}
 
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -83,13 +83,15 @@ svg{display:block}
 .icons .i-line{grid-column:1/-1} .icons .i-line svg{color:var(--line)}
 .icons .i-yt svg{color:var(--yt)} .icons .i-fb svg{color:var(--fb)} .icons .i-ig svg{color:var(--ig)}
 .icons .i-yt{--c:var(--yt)} .icons .i-fb{--c:var(--fb)} .icons .i-ig{--c:var(--ig)}
-/* 10/30 他選 80＋87：YouTube、FB、IG 做成品牌色大卡＋大數字（顏色混一點白，不要太飽和），其他三個維持淺底小按鈕 */
-.icons a.big{flex-direction:column;gap:2px;height:auto;padding:12px 4px 10px;border:0;border-radius:16px;background:color-mix(in srgb,var(--c) 78%,var(--soften));color:#fff;text-align:center;box-shadow:0 3px 0 rgba(0,0,0,.12)}
+/* 10/30 他選 90：YouTube、FB、IG 三張大卡改成頁面品牌綠（深淺漸層＋厚底），平台原色只留在白色小圓裡的圖示，數字用窄體大字；其他三個維持淺底小按鈕 */
+.icons a.big{flex-direction:column;gap:2px;height:auto;padding:14px 4px 12px;border:0;border-radius:16px;background:linear-gradient(160deg,var(--brand),var(--brand-d));color:#fff;text-align:center;box-shadow:0 4px 0 var(--brand-dd),0 8px 16px rgba(20,60,60,.18);margin-bottom:4px}
 .icons a.big:hover{border:0}
-.icons a.big svg{color:#fff;width:24px;height:24px}
-.icons a.big b{font-size:20px;font-weight:900;line-height:1.2;margin-top:4px;font-variant-numeric:tabular-nums}
-.icons a.big small{font-size:11.5px;font-weight:500;opacity:.92}
-.icons a.big .cta{margin-top:6px;font-size:12.5px;font-weight:900;background:rgba(255,255,255,.22);border-radius:999px;padding:1px 10px;overflow:visible}
+.icons a.big .pi{width:34px;height:34px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none}
+.icons a.big .pi svg{width:19px;height:19px}
+.icons a.big b{font-family:var(--num);font-size:30px;font-weight:700;line-height:1;margin-top:8px;letter-spacing:.01em;font-variant-numeric:tabular-nums}
+.icons a.big b em{font-style:normal;font-family:var(--font);font-size:.55em;margin-left:2px}
+.icons a.big small{font-size:11.5px;font-weight:500;opacity:.85}
+.icons a.big .cta{margin-top:8px;font-size:12px;font-weight:700;border:1px solid rgba(255,255,255,.55);border-radius:999px;padding:0 10px;overflow:visible}
 .icons a.sm{height:40px;font-size:13px;border-radius:12px}
 .icons a.sm svg{width:18px;height:18px}
 .icons .x{display:grid;place-items:center;width:20px;height:20px;border-radius:5px;background:var(--xhs);color:#fff;font-size:9.5px;font-weight:900;font-style:normal;line-height:1;flex:none}
@@ -394,7 +396,7 @@ function toast(msg){
 const SHORT = { yt:'YouTube', fb:'Facebook', threads:'Threads', tt:'TikTok', ig:'Instagram', xhs:'小紅書' };
 const BIG = ['yt','fb','ig'], SMALL = ['tt','threads','xhs'];
 const chan = k => CHANNELS.find(c => c.k === k);
-$('#icons').innerHTML = BIG.map(chan).map(c => `<a class="big i-${c.k}" href="${c.url}" target="_blank" rel="noopener" aria-label="${esc(c.name)} ${esc(c.n)}${esc(c.unit)}">${ICON[c.k]}<b>${esc(c.n)}</b><small>${esc(c.unit)}</small><span class="cta">${esc(c.cta)} ›</span></a>`).join('')
+$('#icons').innerHTML = BIG.map(chan).map(c => `<a class="big i-${c.k}" href="${c.url}" target="_blank" rel="noopener" aria-label="${esc(c.name)} ${esc(c.n)}${esc(c.unit)}"><span class="pi">${ICON[c.k]}</span><b>${esc(c.n.replace(/\s*萬$/, ''))}${/萬$/.test(c.n) ? '<em>萬</em>' : ''}</b><small>${esc(c.unit)}</small><span class="cta">${esc(c.cta)} ›</span></a>`).join('')
   + SMALL.map(chan).map(c => `<a class="sm i-${c.k}" href="${c.url}" target="_blank" rel="noopener" aria-label="${esc(c.name)}">${c.k === 'xhs' ? '<i class="x" aria-hidden="true">紅</i>' : ICON[c.k]}<span>${SHORT[c.k]}</span></a>`).join('')
   + `<a class="i-line" href="https://lin.ee/uaWAxc5" target="_blank" rel="noopener" aria-label="LINE 官方帳號"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3C6.5 3 2 6.6 2 11c0 3.9 3.5 7.2 8.3 7.9.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.5s5.9-3.5 8.1-6C21.4 14.2 22 12.7 22 11c0-4.4-4.5-8-10-8Zm-3.6 10.6H6.4a.5.5 0 0 1-.5-.5V9a.5.5 0 0 1 1 0v3.6h1.5a.5.5 0 0 1 0 1Zm2-.5a.5.5 0 0 1-1 0V9a.5.5 0 0 1 1 0v4.1Zm4.8 0a.5.5 0 0 1-.9.3l-2-2.8v2.5a.5.5 0 0 1-1 0V9a.5.5 0 0 1 .9-.3l2 2.8V9a.5.5 0 0 1 1 0v4.1Zm3.3-2.6a.5.5 0 0 1 0 1h-1.5v1h1.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5V9a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-1.5v1h1.5Z"/></svg><span>LINE 私訊我們・合作、團購都可以問</span></a>`;
 function renderVideos(list){ $('#vids').innerHTML = list.map(v => `<a class="vid" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener">
