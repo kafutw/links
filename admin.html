@@ -16,6 +16,7 @@
   --brand:#347E86; --brand-ink:#FFFFFF; --soft:#E1EEED;
   --hot:#D4621B; --hot-soft:#FBEBDD; --tint:#F1F5F4; --ok:#1F7A4D; --ok-soft:#E3F3EA; --bad:#B3261E; --bad-soft:#FBE7E5;
   --ph:#CBD6D5; --shadow:0 1px 2px rgba(20,40,40,.06),0 4px 14px rgba(20,40,40,.06);
+  --brand-d:#245A60; --sky:#1F6FB2; --sky-ink:#FFFFFF; --sky-d:#14507F; --sky-bg:#E4F0FB; --sky-bg2:#F5FAFE;
   --font:"Noto Sans TC","PingFang TC","Heiti TC","Microsoft JhengHei",sans-serif;
   --num:"Barlow Condensed","Arial Narrow",var(--font);
   color-scheme:light;
@@ -24,7 +25,8 @@
   --bg:#111819; --surface:#1B2426; --ink:#E6EEEE; --muted:#9AAAAB; --rule:#2F3B3D;
   --brand:#5FB0B8; --brand-ink:#0F1819; --soft:#1F3133;
   --hot:#F29A55; --hot-soft:#3A2A1B; --tint:#E9EFEE; --ok:#5CCB8F; --ok-soft:#173326; --bad:#FF8A80; --bad-soft:#3A1F1D;
-  --ph:#2A3A3B; --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark}}
+  --ph:#2A3A3B; --shadow:0 1px 2px rgba(0,0,0,.3);
+  --brand-d:#3B7F86; --sky:#8CC2F0; --sky-ink:#0F1819; --sky-d:#5A92C2; --sky-bg:#18293A; --sky-bg2:#1B2430; color-scheme:dark}}
 
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.6;
@@ -60,7 +62,9 @@ form{display:flex;flex-direction:column;gap:14px}
 .f > span em{font-style:normal;color:var(--hot);margin-left:2px}
 .f small{font-size:12px;color:var(--muted)}
 input[type=text],input[type=url],input[type=date],input[type=password],input[type=number]{width:100%;height:44px;border:1.5px solid var(--rule);border-radius:10px;background:var(--surface);padding:0 12px;font-size:16px}
-input:focus{border-color:var(--brand);outline:none}
+textarea{width:100%;min-height:104px;border:1.5px solid var(--rule);border-radius:10px;background:var(--surface);padding:10px 12px;font:inherit;font-size:16px;line-height:1.5;resize:vertical}
+input:focus,textarea:focus{border-color:var(--brand);outline:none}
+.seg.two{grid-template-columns:repeat(2,1fr)}
 .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .seg label{position:relative}
 .seg input{position:absolute;opacity:0}
@@ -91,21 +95,31 @@ input:focus{border-color:var(--brand);outline:none}
 
 /* 預覽卡：跟連結頁上的商品圖磚同一套樣式 */
 .pv h2,.list h2{margin:0 0 10px;font-size:13px;letter-spacing:.14em;color:var(--muted)}
-/* 預覽卡：跟連結頁一樣的橫式卡（7 號淺色底框） */
-.tile{display:grid;grid-template-columns:112px minmax(0,1fr);gap:12px;background:var(--surface);border-radius:18px;padding:10px;box-shadow:var(--shadow)}
-.tile .im{width:112px;height:140px;border-radius:12px;overflow:hidden;background:var(--tint);display:grid;place-items:center}
+/* 預覽卡：跟連結頁一樣（10/30 定案：150 寬大圖、重點放右欄圈圈數字、按鈕橫跨整卡＋手指輕點＋厚底；旅遊卡晴空藍） */
+.tile{--acc:var(--brand);--acc-ink:var(--brand-ink);--acc-d:var(--brand-d);display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;align-items:start;background:var(--tint);border-radius:16px;padding:10px}
+.tile.trip{--acc:var(--sky);--acc-ink:var(--sky-ink);--acc-d:var(--sky-d);background:linear-gradient(160deg,var(--sky-bg),var(--sky-bg2))}
+.tile .im{width:150px;height:188px;border-radius:12px;overflow:hidden;background:var(--surface);display:grid;place-items:center;box-shadow:0 2px 8px rgba(20,40,40,.15)}
 .tile .im img{width:100%;height:100%}
 .tile .im img.prod{object-fit:contain;padding:4px}
 .tile .im img.photo{object-fit:cover;object-position:50% 40%}
-.tile .t{display:flex;flex-direction:column;gap:6px;min-width:0;padding-block:2px}
-.tile .cap{font-size:15px;font-weight:700;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tile .t{display:flex;flex-direction:column;gap:8px;min-width:0;padding-block:2px}
+.tile .cap{font-size:16px;font-weight:900;line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .tile .meta{display:flex;flex-wrap:wrap;gap:6px}
-.tile .pl{display:inline-block;font-size:11.5px;font-weight:700;border-radius:999px;padding:1px 9px;background:var(--soft);color:var(--brand)}
+.tile .pl{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:1px 10px;background:var(--soft);color:var(--brand)}
 .tile .pl.live{background:var(--hot-soft);color:var(--hot)}
 .tile .pl.end{background:var(--hot);color:#fff}
+.tile.trip .pl{background:var(--surface);color:var(--sky)}
 .tile .code{font-size:12.5px;color:var(--muted)}
 .tile .code b{color:var(--ink)}
-.tile .go{margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:999px;background:var(--brand);color:var(--brand-ink);font-weight:700;font-size:13.5px}
+.pts{margin:2px 0 0;padding:0;list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:5px;font-size:13.5px;line-height:1.45}
+.pts li{counter-increment:s;display:grid;grid-template-columns:20px minmax(0,1fr);gap:7px;align-items:start}
+.pts li::before{content:counter(s);width:19px;height:19px;border-radius:50%;background:var(--acc);color:var(--acc-ink);font-size:11px;font-weight:900;display:grid;place-items:center;margin-top:1px}
+.tile .note{display:block;font-size:12px;line-height:1.5;color:var(--muted)}
+.tile .go{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:8px;height:48px;border-radius:999px;background:var(--acc);color:var(--acc-ink);font-weight:900;font-size:16px;letter-spacing:.04em;box-shadow:0 6px 0 var(--acc-d),0 8px 14px rgba(0,0,0,.22);margin-bottom:6px}
+.tile .go svg{width:18px;height:18px;flex:none}
+.tile .go .hand{width:22px;height:22px;animation:tap 2s ease-in-out infinite;transform-origin:50% 80%}
+@keyframes tap{0%,55%,100%{transform:translateY(0) scale(1)}65%{transform:translateY(3px) scale(.88)}75%{transform:translateY(0) scale(1)}}
+@media (prefers-reduced-motion: reduce){.tile .go .hand{animation:none}}
 .tile.off{filter:grayscale(1);opacity:.6}
 .pv p{margin:8px 2px 0;font-size:12px;color:var(--muted);text-align:center}
 
@@ -155,6 +169,15 @@ input:focus{border-color:var(--brand);outline:none}
           </div>
         </div>
 
+        <div class="f">
+          <span>類型</span>
+          <div class="seg two" role="radiogroup" aria-label="類型">
+            <label><input type="radio" name="type" value="商品" checked><span>商品</span></label>
+            <label><input type="radio" name="type" value="旅遊"><span>旅遊行程</span></label>
+          </div>
+          <small>選「旅遊行程」卡片會變藍色，按鈕寫「看行程與價格」</small>
+        </div>
+
         <label class="f" id="untilBox"><span>團購截止日</span><input id="until" type="date"><small>過了這天，連結頁會自動收起來</small></label>
 
         <label class="f"><span>購買連結<em>＊</em></span><input id="url" type="url" inputmode="url" required placeholder="https://"></label>
@@ -163,6 +186,8 @@ input:focus{border-color:var(--brand);outline:none}
           <label class="f"><span>折扣碼</span><input id="code" type="text" maxlength="30" placeholder="沒有就空著"></label>
           <label class="f"><span>YT 影片網址</span><input id="video" type="url" inputmode="url" placeholder="有的話封面會自動抓"></label>
         </div>
+
+        <label class="f"><span>重點</span><textarea id="more" maxlength="300" placeholder="一行一點，例如：&#10;36 公分寬&#10;120 公升&#10;備註：開頭寫「備註：」的那行會變小字"></textarea><small>一行一點，越短越好；會用圈圈數字排在名稱下面</small></label>
 
         <div class="f">
           <span>封面圖</span>
@@ -185,7 +210,7 @@ input:focus{border-color:var(--brand);outline:none}
     <div class="pv">
       <h2>連結頁上會長這樣</h2>
       <div class="tile" id="pv"></div>
-      <p>點這張卡會直接打開購買連結；有上傳商品圖（去背的最好看）就用商品圖，沒有就用 YT 縮圖</p>
+      <p>點這張卡會直接打開購買連結；有上傳封面就用封面，沒有就用 YT 縮圖。去背的 png 會整個放進框，照片會填滿</p>
     </div>
   </div>
 
@@ -236,12 +261,13 @@ function toItems(rows){
   const head = (rows.shift() || []).map(h => h.trim());
   const col = name => head.findIndex(h => h.startsWith(name));
   const C = { no:col('編號'), name:col('商品名'), video:col('YT'), status:col('狀態'), until:col('團購截止'),
-    code:head.findIndex(h => h === '折扣碼'), url:col('購買連結') >= 0 ? col('購買連結') : col('按鈕1連結'), cover:col('封面圖') };
+    code:head.findIndex(h => h === '折扣碼'), url:col('購買連結') >= 0 ? col('購買連結') : col('按鈕1連結'), cover:col('封面圖'),
+    type:col('類型'), more:col('展開') };
   const g = (r, k) => C[k] >= 0 ? (r[C[k]] || '').trim() : '';
   return rows.map(r => {
     const name = g(r,'name'); if (!name) return null;
     return { no: g(r,'no').replace(/\D/g,''), name, video: g(r,'video'), url: g(r,'url'), status: g(r,'status') || '隨時可買',
-      until: g(r,'until'), code: g(r,'code'), coverRaw: g(r,'cover') };
+      until: g(r,'until'), code: g(r,'code'), coverRaw: g(r,'cover'), type: /旅遊|行程/.test(g(r,'type')) ? '旅遊' : '商品', more: g(r,'more') };
   }).filter(Boolean);
 }
 function mergeItems(lists){
@@ -260,10 +286,21 @@ function isOff(it){
 }
 
 /* ---------- 預覽卡 ---------- */
+const HAND = '<svg class="hand" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 14a8 8 0 0 1-8 8"/><path d="M18 11v-1a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M14 10V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1"/><path d="M10 9.5V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v10"/><path d="M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>';
+const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13m-5-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+/* 跟連結頁同一套：一行一點，「備註：」開頭的那行變成小字 */
+function points(text){
+  const lines = text.split(/\n/).map(l => l.replace(/^\s*(?:[-・•‧]|\d+[.、)）])\s*/, '').trim()).filter(Boolean);
+  const isNote = l => /^備註[:：]/.test(l);
+  const lis = lines.filter(l => !isNote(l)).map(l => `<li>${esc(l)}</li>`).join('');
+  const notes = lines.filter(isNote).map(l => `<span class="note">${esc(l.replace(/^備註[:：]\s*/, ''))}</span>`).join('');
+  return (lis ? `<ol class="pts">${lis}</ol>` : '') + notes;
+}
 function readForm(){
   return { no: $('#no').value.replace(/\D/g,'') || String(nextNo()), name: $('#name').value.trim(), url: $('#url').value.trim(),
     code: $('#code').value.trim(), video: $('#video').value.trim(), until: $('#until').value,
-    status: document.querySelector('input[name=status]:checked').value };
+    status: document.querySelector('input[name=status]:checked').value,
+    type: document.querySelector('input[name=type]:checked').value, more: $('#more').value.trim() };
 }
 function preview(){
   const d = readForm();
@@ -274,14 +311,16 @@ function preview(){
   const end = live ? parseDate(d.until) : null;
   const left = end ? Math.ceil((end - new Date()) / 86400000) - 1 : null;
   const date = end ? `～${end.getMonth()+1}/${end.getDate()}` : '';
-  $('#pv').className = 'tile' + (d.status === '已結束' ? ' off' : '');
-  const isProd = !imgData && !!keepCover || !!imgData;
+  const trip = d.type === '旅遊';
+  $('#pv').className = 'tile' + (trip ? ' trip' : '') + (d.status === '已結束' ? ' off' : '');
+  /* 去背 png 整個放進框，其他（照片、YT 縮圖、剛上傳的圖）填滿 */
+  const isProd = !imgData && /\.png(\?|$)/i.test(keepCover);
   const pill = live ? `<span class="pl live">團購中${esc(date)}</span>` : d.status === '已結束' ? '<span class="pl">下架</span>' : '<span class="pl">隨時可買</span>';
   $('#pv').innerHTML = `<span class="im">${src ? `<img class="${isProd ? 'prod' : 'photo'}" src="${esc(src)}" alt="" onerror="this.remove()">` : ''}</span>
     <span class="t"><span class="cap">${esc(d.name || '商品名')}</span>
       <span class="meta">${pill}${left !== null && left <= 3 ? `<span class="pl end">${left <= 0 ? '今天截止' : `剩 ${left} 天`}</span>` : ''}</span>
-      ${d.code ? `<span class="code">折扣碼 <b>${esc(d.code)}</b></span>` : ''}
-      <span class="go">去購買 ›</span></span>`;
+      ${d.code ? `<span class="code">折扣碼 <b>${esc(d.code)}</b></span>` : ''}${d.more ? points(d.more) : ''}</span>
+    <span class="go">${HAND}<span>${trip ? '看行程與價格' : '去購買'}</span>${ARROW}</span>`;
 }
 
 /* ---------- 封面圖：在瀏覽器裡先縮到 1080 寬再送，省流量也比較快 ---------- */
@@ -376,6 +415,8 @@ $('#items').addEventListener('click', e => {
   $('#no').value = it.no; $('#name').value = it.name; $('#url').value = it.url; $('#code').value = it.code; $('#video').value = it.video;
   const st = /結束|下架/.test(it.status) ? '已結束' : /團購/.test(it.status) ? '團購中' : '隨時可買';
   document.querySelector(`input[name=status][value="${st}"]`).checked = true;
+  document.querySelector(`input[name=type][value="${it.type}"]`).checked = true;
+  $('#more').value = it.more;
   const dt = parseDate(it.until);
   $('#until').value = dt ? `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}` : '';
   imgData = null; keepCover = it.coverRaw; showImg(); preview(); $('#msg').hidden = true;

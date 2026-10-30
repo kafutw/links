@@ -23,6 +23,8 @@
   --yt:#E5002D; --fb:#1877F2; --ig:#D62E6F; --xhs:#FF2442;
   --shadow:0 1px 2px rgba(20,40,40,.06),0 4px 14px rgba(20,40,40,.06);
   --ph:#CBD6D5;
+  --sky:#1F6FB2; --sky-ink:#FFFFFF; --sky-bg:#E4F0FB; --sky-bg2:#F5FAFE;
+  --brand-d:#245A60; --sky-d:#14507F; --soften:#FFFFFF;
   --font:"Noto Sans TC","PingFang TC","Heiti TC","Microsoft JhengHei",sans-serif;
   --num:"Barlow Condensed","Arial Narrow",var(--font);
   color-scheme:light;
@@ -32,7 +34,9 @@
   --brand:#5FB0B8; --brand-ink:#0F1819; --line:#2BD46F;
   --hot:#F29A55; --hot-soft:#3A2A1B; --soft:#1F3133; --tint:#E9EFEE; --edge:#3A4A49;
   --yt:#FF4D6A; --fb:#4D9BFF; --ig:#F06398; --xhs:#FF5C73;
-  --shadow:0 1px 2px rgba(0,0,0,.3); --ph:#2A3A3B; color-scheme:dark}}
+  --shadow:0 1px 2px rgba(0,0,0,.3); --ph:#2A3A3B;
+  --sky:#8CC2F0; --sky-ink:#0F1819; --sky-bg:#18293A; --sky-bg2:#1B2430;
+  --brand-d:#3B7F86; --sky-d:#5A92C2; --soften:#1B2426; color-scheme:dark}}
 
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -60,10 +64,8 @@ svg{display:block}
 .row b{display:block;font-size:14.5px}
 .row small{display:block;font-size:12.5px;color:var(--muted)}
 .row i{font-style:normal;color:var(--brand);font-weight:900;font-size:18px}
-.nums{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.nums a{background:var(--tint);border-radius:14px;padding:10px 6px;text-align:center}
-.nums b{display:block;font-family:var(--num);font-size:24px;line-height:1.1}
-.nums small{font-size:11.5px;color:var(--muted)}
+/* 10/30 頭部改成 FB／IG／YT 數字大卡後，這區原本的三格數字重複，拿掉只留部落格列 */
+.sec-t + .row{margin-top:0}
 
 /* 頭部 */
 .hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px}
@@ -80,6 +82,16 @@ svg{display:block}
 .icons span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .icons .i-line{grid-column:1/-1} .icons .i-line svg{color:var(--line)}
 .icons .i-yt svg{color:var(--yt)} .icons .i-fb svg{color:var(--fb)} .icons .i-ig svg{color:var(--ig)}
+.icons .i-yt{--c:var(--yt)} .icons .i-fb{--c:var(--fb)} .icons .i-ig{--c:var(--ig)}
+/* 10/30 他選 80＋87：YouTube、FB、IG 做成品牌色大卡＋大數字（顏色混一點白，不要太飽和），其他三個維持淺底小按鈕 */
+.icons a.big{flex-direction:column;gap:2px;height:auto;padding:12px 4px 10px;border:0;border-radius:16px;background:color-mix(in srgb,var(--c) 78%,var(--soften));color:#fff;text-align:center;box-shadow:0 3px 0 rgba(0,0,0,.12)}
+.icons a.big:hover{border:0}
+.icons a.big svg{color:#fff;width:24px;height:24px}
+.icons a.big b{font-size:20px;font-weight:900;line-height:1.2;margin-top:4px;font-variant-numeric:tabular-nums}
+.icons a.big small{font-size:11.5px;font-weight:500;opacity:.92}
+.icons a.big .cta{margin-top:6px;font-size:12.5px;font-weight:900;background:rgba(255,255,255,.22);border-radius:999px;padding:1px 10px;overflow:visible}
+.icons a.sm{height:40px;font-size:13px;border-radius:12px}
+.icons a.sm svg{width:18px;height:18px}
 .icons .x{display:grid;place-items:center;width:20px;height:20px;border-radius:5px;background:var(--xhs);color:#fff;font-size:9.5px;font-weight:900;font-style:normal;line-height:1;flex:none}
 @media (prefers-reduced-motion: reduce){.icons a{transition:none}}
 
@@ -104,23 +116,40 @@ svg{display:block}
 
 /* 商品圖磚 */
 .tiles{display:flex;flex-direction:column;gap:12px}
-/* 商品卡：橫式清單卡（10/29 他從五種候選選 1）＝左邊直式小圖、右邊名稱＋狀態＋按鈕，封面不壓暗 */
-.tile{display:grid;grid-template-columns:112px minmax(0,1fr);gap:12px;background:var(--tint);border-radius:16px;padding:10px;scroll-margin-top:20px;transition:box-shadow .3s}
+/* 商品卡：橫式清單卡（10/29 他從五種候選選 1）；10/30 他選 69＝圖放大到 150 寬、按鈕移到圖下面橫跨整張卡，讓人一看就知道要按 */
+.tile{--acc:var(--brand);--acc-ink:var(--brand-ink);--acc-d:var(--brand-d);display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;align-items:start;background:var(--tint);border-radius:16px;padding:10px;scroll-margin-top:20px;transition:box-shadow .3s}
 .tile.flash{box-shadow:0 0 0 3px var(--brand),0 0 0 9px rgba(52,126,134,.3)}
-/* 左邊圖框（他選 7 號淺色底）：官方商品圖去背後用 contain 放進來；沒有商品圖時退回 YT 縮圖，用 cover 填滿 */
-.tile .im{width:112px;height:140px;border-radius:12px;overflow:hidden;background:var(--surface);display:grid;place-items:center}
+/* 左邊圖框 4:5：去背商品圖（png）用 contain 放進來；實拍照片和 YT 縮圖用 cover 填滿 */
+.tile .im{width:150px;height:188px;border-radius:12px;overflow:hidden;background:var(--surface);display:grid;place-items:center;box-shadow:0 2px 8px rgba(20,40,40,.15)}
 .tile .im img{width:100%;height:100%}
 .tile .im img.prod{object-fit:contain;padding:4px}
 .tile .im img.photo{object-fit:cover;object-position:50% 40%}
-.tile .t{display:flex;flex-direction:column;gap:6px;min-width:0;padding-block:2px}
-.tile .cap{font-size:15px;font-weight:700;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tile .t{display:flex;flex-direction:column;gap:8px;min-width:0;padding-block:2px}
+.tile .cap{font-size:16px;font-weight:900;line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .tile .meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.tile .pill{display:inline-block;font-size:11.5px;font-weight:700;border-radius:999px;padding:1px 9px;background:var(--soft);color:var(--brand)}
+.tile .pill{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:1px 10px;background:var(--soft);color:var(--brand)}
 .tile .pill.live{background:var(--hot-soft);color:var(--hot)}
 .tile .pill.end{background:var(--hot);color:#fff}
 .tile .code{font-size:12.5px;color:var(--muted)}
 .tile .code b{color:var(--ink);letter-spacing:.04em}
-.tile .go{margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:999px;background:var(--brand);color:var(--brand-ink);font-weight:700;font-size:13.5px}
+.tile .go{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:6px;height:48px;border-radius:999px;background:var(--acc);color:var(--acc-ink);font-weight:900;font-size:16px;letter-spacing:.04em;box-shadow:0 6px 0 var(--acc-d),0 8px 14px rgba(0,0,0,.22);margin-bottom:6px;transition:transform .08s,box-shadow .08s}
+/* 10/30 他選 84：下面一層深色厚邊，按下去會往下沉，像實體按鈕 */
+.tile:active .go,.tile .go:active{transform:translateY(5px);box-shadow:0 1px 0 var(--acc-d),0 2px 4px rgba(0,0,0,.2)}
+.tile .go{gap:8px}
+.tile .go svg{width:18px;height:18px;flex:none}
+.tile .go .hand{width:22px;height:22px}
+/* 10/30 他選 72：手指每兩秒往下輕點一下，提醒「這裡可以按」；系統設定減少動態時停住 */
+@keyframes tap{0%,55%,100%{transform:translateY(0) scale(1)}65%{transform:translateY(3px) scale(.88)}75%{transform:translateY(0) scale(1)}}
+.tile .go .hand{animation:tap 2s ease-in-out infinite;transform-origin:50% 80%}
+@media (prefers-reduced-motion: reduce){.tile .go .hand{animation:none}.tile .go{transition:none}}
+/* 旅遊行程卡（10/30 他選 22 晴空藍）：試算表「類型」填「旅遊」→ 淺藍漸層底、藍色按鈕 */
+.tile.trip{--acc:var(--sky);--acc-ink:var(--sky-ink);--acc-d:var(--sky-d);background:linear-gradient(160deg,var(--sky-bg),var(--sky-bg2))}
+.tile.trip .pill{background:var(--surface);color:var(--sky)}
+/* 重點（10/30 他選 82）：試算表「展開內容」一行一點，直接放在右欄圈圈數字，不用點開；「備註：」開頭的那行變成小字 */
+.pts{margin:2px 0 0;padding:0;list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:5px;font-size:13.5px;line-height:1.45}
+.pts li{counter-increment:s;display:grid;grid-template-columns:20px minmax(0,1fr);gap:7px;align-items:start}
+.pts li::before{content:counter(s);width:19px;height:19px;border-radius:50%;background:var(--acc);color:var(--acc-ink);font-size:11px;font-weight:900;display:grid;place-items:center;margin-top:1px}
+.tile .note{display:block;font-size:12px;line-height:1.5;color:var(--muted)}
 .empty{grid-column:1/-1;text-align:center;font-size:13.5px;color:var(--muted);background:var(--tint);border-radius:16px;padding:20px 12px}
 
 /* 頻道數字磚 */
@@ -186,7 +215,6 @@ svg{display:block}
 
   <section class="blk" aria-labelledby="ch-h">
     <div class="sec-t"><b id="ch-h">跟著卡夫卡一起去旅行</b></div>
-    <div class="nums" id="list"></div>
     <a class="row" href="https://kafu.tw/" target="_blank" rel="noopener"><span><b>部落格 kafu.tw</b><small>近 2,000 篇吃喝玩樂，出門前先查</small></span><i>›</i></a>
   </section>
 
@@ -241,6 +269,8 @@ const ICON = {
   threads:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17.5 8.5C16.6 5.6 14.6 4 12 4 7.6 4 5 7.2 5 12s2.6 8 7 8c3.4 0 6-2 6-5 0-2.6-2-4.2-5.2-4.2-2.6 0-4.3 1.2-4.3 3 0 1.5 1.2 2.6 3 2.6 2.6 0 4-2 4-5.4"/></svg>',
   tt:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 3c.3 2.1 1.6 3.5 3.6 3.7v3.1c-1.3.1-2.5-.3-3.6-1v6.4c0 3.6-2.6 5.8-5.7 5.8-3.3 0-5.7-2.6-5.4-5.9.3-2.9 2.8-5 6-4.7v3.2c-1.4-.3-2.8.5-3 1.9-.2 1.5.9 2.6 2.4 2.6 1.4 0 2.5-1 2.5-2.9V3h3.2Z"/></svg>',
   xhs:'<svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4" fill="currentColor"/><text x="12" y="15.3" text-anchor="middle" font-size="8.5" font-weight="700" fill="var(--bg)" font-family="Noto Sans TC,sans-serif">小紅書</text></svg>',
+  hand:'<svg class="hand" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 14a8 8 0 0 1-8 8"/><path d="M18 11v-1a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M14 10V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1"/><path d="M10 9.5V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v10"/><path d="M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>',
+  arrow:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13m-5-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>',
 };
 
@@ -280,7 +310,8 @@ function toItems(rows){
   const head = (rows.shift() || []).map(h => h.trim());
   const col = name => head.findIndex(h => h.startsWith(name));
   const C = { no:col('編號'), name:col('商品名'), video:col('YT'), status:col('狀態'), until:col('團購截止'),
-    code:head.findIndex(h => h === '折扣碼'), url:col('購買連結') >= 0 ? col('購買連結') : col('按鈕1連結'), cover:col('封面圖') };
+    code:head.findIndex(h => h === '折扣碼'), url:col('購買連結') >= 0 ? col('購買連結') : col('按鈕1連結'), cover:col('封面圖'),
+    type:col('類型'), more:col('展開') };
   const g = (r, k) => C[k] >= 0 ? (r[C[k]] || '').trim() : '';
   return rows.map(r => {
     const name = g(r,'name'); if (!name) return null;
@@ -289,6 +320,7 @@ function toItems(rows){
       no: g(r,'no').replace(/\D/g,''), name, video: safeUrl(g(r,'video')), url: safeUrl(g(r,'url')),
       status: /團購/.test(st) ? 'live' : /結束|下架/.test(st) ? 'ended' : 'long',
       until: g(r,'until'), code: g(r,'code'), cover: driveImg(g(r,'cover')),
+      trip: /旅遊|行程/.test(g(r,'type')), more: g(r,'more'),
     };
   }).filter(Boolean);
 }
@@ -317,15 +349,26 @@ function tile(it){
   const left = end ? Math.ceil((end - new Date()) / 86400000) - 1 : null;
   const date = end ? `～${end.getMonth()+1}/${end.getDate()}` : '';
   const pill = it.status === 'live' ? `<span class="pill live">團購中${esc(date)}</span>` : '<span class="pill">隨時可買</span>';
-  return `<a class="tile"${it.no ? ` id="${esc(it.no)}" data-no="${esc(it.no)}"` : ''} href="${esc(it.url || it.video || '#')}" target="_blank" rel="noopener sponsored">
-    <span class="im">${src ? `<img class="${it.cover ? 'prod' : 'photo'}" src="${esc(src)}" alt="" loading="lazy" onerror="${fallback}">` : ''}</span>
-    <span class="t">
-      <span class="cap">${esc(it.name)}</span>
+  const href = esc(it.url || it.video || '#'), go = it.trip ? '看行程與價格' : '去購買';
+  /* 去背的商品圖（png）用 contain 整個放進框；實拍照片（10/30 起改用自家影片截圖）填滿左框 */
+  const img = src ? `<img class="${/\.png(\?|$)/i.test(it.cover) ? 'prod' : 'photo'}" src="${esc(src)}" alt="" loading="lazy" onerror="${fallback}">` : '';
+  const body = `<span class="cap">${esc(it.name)}</span>
       <span class="meta">${pill}${left !== null && left <= 3 ? `<span class="pill end">${left <= 0 ? '今天截止' : `剩 ${left} 天`}</span>` : ''}</span>
-      ${it.code ? `<span class="code">折扣碼 <b>${esc(it.code)}</b></span>` : ''}
-      <span class="go">去購買 ›</span>
-    </span>
+      ${it.code ? `<span class="code">折扣碼 <b>${esc(it.code)}</b></span>` : ''}`;
+  const attrs = `class="tile${it.trip ? ' trip' : ''}"${it.no ? ` id="${esc(it.no)}" data-no="${esc(it.no)}"` : ''}`;
+  return `<a ${attrs} href="${href}" target="_blank" rel="noopener sponsored">
+    <span class="im">${img}</span>
+    <span class="t">${body}${it.more ? points(it.more) : ''}</span>
+    <span class="go">${ICON.hand}<span>${go}</span>${ICON.arrow}</span>
   </a>`;
+}
+/* 「展開內容」一行一點，放在右欄用圈圈數字；「備註：」開頭的那行變成下面的小字 */
+function points(text){
+  const lines = text.split(/\n/).map(l => l.replace(/^\s*(?:[-・•‧]|\d+[.、)）])\s*/, '').trim()).filter(Boolean);
+  const isNote = l => /^備註[:：]/.test(l);
+  const lis = lines.filter(l => !isNote(l)).map(l => `<li>${esc(l)}</li>`).join('');
+  const notes = lines.filter(isNote).map(l => `<span class="note">${esc(l.replace(/^備註[:：]\s*/, ''))}</span>`).join('');
+  return (lis ? `<ol class="pts">${lis}</ol>` : '') + notes;
 }
 function render(){
   const open = ITEMS.filter(isOpen);
@@ -349,10 +392,11 @@ function toast(msg){
 }
 
 const SHORT = { yt:'YouTube', fb:'Facebook', threads:'Threads', tt:'TikTok', ig:'Instagram', xhs:'小紅書' };
-$('#icons').innerHTML = CHANNELS.filter(c => c.k !== 'blog').map(c => `<a class="i-${c.k}" href="${c.url}" target="_blank" rel="noopener" aria-label="${esc(c.name)}">${c.k === 'xhs' ? '<i class="x" aria-hidden="true">紅</i>' : ICON[c.k]}<span>${SHORT[c.k]}</span></a>`).join('')
+const BIG = ['yt','fb','ig'], SMALL = ['tt','threads','xhs'];
+const chan = k => CHANNELS.find(c => c.k === k);
+$('#icons').innerHTML = BIG.map(chan).map(c => `<a class="big i-${c.k}" href="${c.url}" target="_blank" rel="noopener" aria-label="${esc(c.name)} ${esc(c.n)}${esc(c.unit)}">${ICON[c.k]}<b>${esc(c.n)}</b><small>${esc(c.unit)}</small><span class="cta">${esc(c.cta)} ›</span></a>`).join('')
+  + SMALL.map(chan).map(c => `<a class="sm i-${c.k}" href="${c.url}" target="_blank" rel="noopener" aria-label="${esc(c.name)}">${c.k === 'xhs' ? '<i class="x" aria-hidden="true">紅</i>' : ICON[c.k]}<span>${SHORT[c.k]}</span></a>`).join('')
   + `<a class="i-line" href="https://lin.ee/uaWAxc5" target="_blank" rel="noopener" aria-label="LINE 官方帳號"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3C6.5 3 2 6.6 2 11c0 3.9 3.5 7.2 8.3 7.9.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.5s5.9-3.5 8.1-6C21.4 14.2 22 12.7 22 11c0-4.4-4.5-8-10-8Zm-3.6 10.6H6.4a.5.5 0 0 1-.5-.5V9a.5.5 0 0 1 1 0v3.6h1.5a.5.5 0 0 1 0 1Zm2-.5a.5.5 0 0 1-1 0V9a.5.5 0 0 1 1 0v4.1Zm4.8 0a.5.5 0 0 1-.9.3l-2-2.8v2.5a.5.5 0 0 1-1 0V9a.5.5 0 0 1 .9-.3l2 2.8V9a.5.5 0 0 1 1 0v4.1Zm3.3-2.6a.5.5 0 0 1 0 1h-1.5v1h1.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5V9a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-1.5v1h1.5Z"/></svg><span>LINE 私訊我們・合作、團購都可以問</span></a>`;
-const NUMS = [['fb','7.5 萬','Facebook 粉絲'], ['ig','3.6 萬','IG 粉絲'], ['yt','251 萬','YouTube 觀看']];
-$('#list').innerHTML = NUMS.map(([k, n, label]) => `<a href="${CHANNELS.find(c => c.k === k).url}" target="_blank" rel="noopener"><b>${n}</b><small>${label}</small></a>`).join('');
 function renderVideos(list){ $('#vids').innerHTML = list.map(v => `<a class="vid" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener">
   <img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="" loading="lazy">
   <span class="tt"><img src="${AVATAR}" alt=""><span>${esc(v.title)}</span></span>
@@ -372,7 +416,8 @@ function track(no){
   fetch(url, {method:'POST', mode:'no-cors', keepalive:true}).catch(() => {});
 }
 ['#live', '#long'].forEach(sel => $(sel).addEventListener('click', e => {
-  const t = e.target.closest('.tile'); if (t) track(t.dataset.no);
+  /* 只算真的點到連結的（展開／收起不算） */
+  const a = e.target.closest('a'), t = a && a.closest('.tile'); if (t) track(t.dataset.no);
 }));
 
 function afterLoad(){

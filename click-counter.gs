@@ -8,7 +8,7 @@
 var ADMIN_KEY = '__ADMIN_KEY__';  // 上架頁的通行碼（真正的值只放在 Apps Script，不進 repo）
 var LIST_SHEET = '上架清單';
 var COVER_FOLDER = '好物連結頁封面';
-var LIST_HEAD = ['時間戳記', '編號', '商品名', '購買連結', '折扣碼', 'YT 影片網址', '狀態', '團購截止日', '封面圖'];
+var LIST_HEAD = ['時間戳記', '編號', '商品名', '購買連結', '折扣碼', 'YT 影片網址', '狀態', '團購截止日', '封面圖', '類型', '展開內容'];
 
 function doPost(e) {
   var body = null;
@@ -81,12 +81,24 @@ function addItem(b) {
     var ss = SpreadsheetApp.getActive();
     var sh = ss.getSheetByName(LIST_SHEET);
     if (!sh) { sh = ss.insertSheet(LIST_SHEET); sh.appendRow(LIST_HEAD); sh.setFrozenRows(1); }
-    sh.appendRow([new Date(), no, name, String(b.url || ''), String(b.code || ''), String(b.video || ''),
-      String(b.status || '隨時可買'), String(b.until || ''), cover]);
+    // 依標題名稱寫欄（中間有「點擊數」之類別的欄也不會錯位）；缺的標題自動補在最右邊
+    var head = ensureHead_(sh);
+    var rec = { '時間戳記': new Date(), '編號': no, '商品名': name, '購買連結': String(b.url || ''), '折扣碼': String(b.code || ''),
+      'YT 影片網址': String(b.video || ''), '狀態': String(b.status || '隨時可買'), '團購截止日': String(b.until || ''), '封面圖': cover,
+      '類型': String(b.type || '商品'), '展開內容': String(b.more || '') };
+    sh.appendRow(head.map(function (h) { return rec.hasOwnProperty(h) ? rec[h] : ''; }));
     return json({ ok: true, no: no, cover: cover });
   } finally {
     lock.releaseLock();
   }
+}
+
+function ensureHead_(sh) {
+  var head = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0].map(String);
+  LIST_HEAD.forEach(function (h) {
+    if (head.indexOf(h) < 0) { sh.getRange(1, head.length + 1).setValue(h); head.push(h); }
+  });
+  return head;
 }
 
 function json(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
