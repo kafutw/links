@@ -190,6 +190,12 @@ svg{display:block}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);font-size:13.5px;border-radius:999px;padding:8px 16px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:calc(100% - 32px);text-align:center;z-index:9}
 .toast.on{opacity:1}
 @media (prefers-reduced-motion: reduce){.tile,.toast{transition:none}}
+/* 11/4 他選 115：商品前的得獎卡，點整張到公關介紹頁 */
+.awd{display:block;color:inherit}
+.c115 .gr{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;text-align:center}
+.c115 .gr img{width:60px;height:60px;object-fit:contain;margin:0 auto 4px;display:block}
+.c115 small{display:block;font-size:11.5px;line-height:1.35;color:var(--muted)}
+.c115 .go{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px;min-height:44px;border-radius:12px;background:var(--tint);border:1.5px solid var(--edge);font-weight:700;font-size:14px}
 </style>
 </head>
 <body>
@@ -202,6 +208,11 @@ svg{display:block}
       <p class="bio"><b>食尚玩家旅宿大賞評審・Yahoo 旅遊專欄作家</b><br>一家人吃過、住過、玩過才分享，近 2,000 篇</p>
       <nav class="icons" aria-label="我們的頻道" id="icons"></nav>
     </header>
+  </section>
+
+  <section class="blk c115" aria-labelledby="aw-h">
+    <div class="sec-t"><b id="aw-h">評審與得獎紀錄</b></div>
+    <a class="awd" href="pr/"><div class="gr"><span><img src="pr/img/badge-jury.png" alt="" width="60" height="60" loading="lazy"><small>旅宿大賞評審</small></span><span><img src="pr/img/seal-st.png" alt="" width="60" height="60" loading="lazy"><small>駐站部落客</small></span><span><img src="pr/img/supertaste-2026-fb-2.png" alt="" width="60" height="60" loading="lazy"><small>FB 創作者</small></span><span><img src="pr/img/seal-px.png" alt="" width="60" height="60" loading="lazy"><small>百大第 10 名</small></span></div><div class="go">看完整的得獎紀錄與合作介紹 ›</div></a>
   </section>
 
   <section class="blk" aria-labelledby="live-h" id="live-sec" hidden>
