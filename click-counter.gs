@@ -109,26 +109,56 @@ function authorizeDrive() { Logger.log(DriveApp.getRootFolder().getName()); }
 /* 上架頁「貼連結自動填」：代讀商品頁的標題、簡介、主圖（網頁本身不能跨站讀）；嘖嘖另外抓募資截止日 */
 function fetchMeta(p) {
   if (String(p.key || '') !== ADMIN_KEY) return json({ ok: false, error: '通行碼不對' });
-  var u = String(p.u || '');
+  var u = String(p.u || ''), v = String(p.v || '');
   if (!/^https?:\/\//i.test(u)) return json({ ok: false, error: '網址不對' });
+  var out = { ok: false, title: '', desc: '', image: '', until: '', via: '' };
+  // 1. 直接讀商品頁
   try {
     var res = UrlFetchApp.fetch(u, { muteHttpExceptions: true, followRedirects: true,
       headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36', 'Accept-Language': 'zh-TW,zh;q=0.9' } });
-    if (res.getResponseCode() >= 400) return json({ ok: false, error: '讀不到（' + res.getResponseCode() + '）' });
-    var html = res.getContentText();
-    var meta = function (k) {
-      var m = new RegExp('<meta[^>]+(?:property|name)=["\']' + k + '["\'][^>]*content=["\']([^"\']*)', 'i').exec(html)
-        || new RegExp('<meta[^>]+content=["\']([^"\']*)["\'][^>]*(?:property|name)=["\']' + k + '["\']', 'i').exec(html);
-      return m ? decode_(m[1]) : '';
-    };
-    var t = /<title[^>]*>([^<]*)/i.exec(html);
-    var until = /募資期間[\s\S]{0,120}?[–~～-]\s*(\d{4}\/\d{1,2}\/\d{1,2})/.exec(html);
-    return json({ ok: true, title: meta('og:title') || (t ? decode_(t[1]) : ''), desc: meta('og:description') || meta('description'),
-      image: meta('og:image'), until: until ? until[1] : '' });
-  } catch (err) {
-    return json({ ok: false, error: String(err.message || err) });
+    if (res.getResponseCode() < 400) {
+      var html = res.getContentText();
+      var meta = function (k) {
+        var m = new RegExp('<meta[^>]+(?:property|name)=["\']' + k + '["\'][^>]*content=["\']([^"\']*)', 'i').exec(html)
+          || new RegExp('<meta[^>]+content=["\']([^"\']*)["\'][^>]*(?:property|name)=["\']' + k + '["\']', 'i').exec(html);
+        return m ? decode_(m[1]) : '';
+      };
+      var t = /<title[^>]*>([^<]*)/i.exec(html);
+      out.title = meta('og:title') || (t ? decode_(t[1]) : ''); out.desc = meta('og:description') || meta('description');
+      out.image = meta('og:image'); out.until = untilOf_(html); out.via = 'direct';
+    }
+  } catch (e1) {}
+  // 2. 讀不到（嘖嘖等會擋）→ 改用閱讀代理 r.jina.ai
+  if (!out.title) {
+    try {
+      var r2 = UrlFetchApp.fetch('https://r.jina.ai/' + u, { muteHttpExceptions: true, headers: { 'Accept': 'application/json', 'X-With-Images-Summary': 'true' } });
+      if (r2.getResponseCode() < 400) {
+        var d = (JSON.parse(r2.getContentText()) || {}).data || {};
+        out.title = d.title || ''; out.desc = d.description || '';
+        var imgs = Object.keys(d.images || {}).map(function (k) { return d.images[k]; });
+        var pick = imgs.filter(function (x) { return /\.(jpe?g|png|webp)(\?|$)/i.test(x) && !/icon|logo|avatar|sprite|favicon|\.svg|\.gif|countdown/i.test(x); })[0];
+        out.image = out.image || pick || '';
+        out.until = out.until || untilOf_(d.content || ''); if (out.title) out.via = 'reader';
+      }
+    } catch (e2) {}
   }
+  // 3. 還是沒有商品名 → 用 YT 影片標題
+  if (!out.title && v) {
+    try {
+      var r3 = UrlFetchApp.fetch('https://www.youtube.com/oembed?format=json&url=' + encodeURIComponent(v), { muteHttpExceptions: true });
+      if (r3.getResponseCode() < 400) { out.title = (JSON.parse(r3.getContentText()) || {}).title || ''; if (out.title) out.via = 'youtube'; }
+    } catch (e3) {}
+  }
+  out.ok = !!(out.title || out.desc || out.image || out.until);
+  if (!out.ok) out.error = '讀不到';
+  return json(out);
 }
+function untilOf_(text) {
+  var m = /募資期間[\s\S]{0,120}?[–~～-]\s*(\d{4}\/\d{1,2}\/\d{1,2})/.exec(text);
+  return m ? m[1] : '';
+}
+/* 測試「貼連結自動填」：在編輯器選 testMeta 按執行，看執行記錄 */
+function testMeta() { Logger.log(fetchMeta({ key: ADMIN_KEY, u: 'https://www.zeczec.com/projects/DimensionCapsule', v: 'https://youtube.com/shorts/KXcOfVCFb5w' }).getContent()); }
 function decode_(s) {
   return String(s).replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;|&#x27;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();
 }
