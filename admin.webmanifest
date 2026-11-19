@@ -1,13 +1,13 @@
 {
-  "name": "好物上架｜卡夫卡愛旅行",
-  "short_name": "好物上架",
+  "name": "社群團購導購主控｜卡夫卡愛旅行",
+  "short_name": "導購主控",
   "start_url": "./admin.html",
   "scope": "./admin.html",
   "display": "standalone",
   "background_color": "#EAEDEC",
-  "theme_color": "#347E86",
+  "theme_color": "#E5571F",
   "icons": [
-    { "src": "img/admin-icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "img/admin-icon-512.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "img/admin-icon-192.png?v=3", "sizes": "192x192", "type": "image/png" },
+    { "src": "img/admin-icon-512.png?v=3", "sizes": "512x512", "type": "image/png" }
   ]
 }
