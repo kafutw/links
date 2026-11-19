@@ -438,6 +438,16 @@ function loadList(){
 }
 
 try { $('#key').value = localStorage.getItem(KEY_STORE) || ''; } catch {}
+/* 網址帶入：admin.html?name=…&url=…&video=…&status=團購中&type=商品&until=2026-12-30&code=…&more=第一點%0A第二點
+   用來在手機點一個連結就把表單填好；只填欄位，不會自動送出 */
+(function prefill(){
+  const q = new URLSearchParams(location.search);
+  ['name','url','code','video','more'].forEach(k => { if (q.has(k)) $('#' + k).value = q.get(k); });
+  const until = parseDate(q.get('until'));
+  if (until) $('#until').value = `${until.getFullYear()}-${String(until.getMonth()+1).padStart(2,'0')}-${String(until.getDate()).padStart(2,'0')}`;
+  const pick = (n, v) => { const el = v && document.querySelector(`input[name=${n}][value="${CSS.escape(v)}"]`); if (el) el.checked = true; };
+  pick('status', q.get('status')); pick('type', q.get('type'));
+})();
 showImg(); preview(); loadList();
 </script>
 </body>
