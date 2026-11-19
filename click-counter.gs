@@ -16,7 +16,7 @@ function doPost(e) {
   if (body && body.action === 'add') return addItem(body);
   return handle(e);
 }
-function doGet(e) { return handle(e); }
+function doGet(e) { if (e && e.parameter && e.parameter.meta) return fetchMeta(e.parameter); return handle(e); }
 
 function handle(e) {
   var no = String((e && e.parameter && e.parameter.no) || '').replace(/\D/g, '');
@@ -105,3 +105,30 @@ function json(o) { return ContentService.createTextOutput(JSON.stringify(o)).set
 
 /* 只用來叫出雲端硬碟授權視窗：在編輯器選這個函式按「執行」一次就好 */
 function authorizeDrive() { Logger.log(DriveApp.getRootFolder().getName()); }
+
+/* 上架頁「貼連結自動填」：代讀商品頁的標題、簡介、主圖（網頁本身不能跨站讀）；嘖嘖另外抓募資截止日 */
+function fetchMeta(p) {
+  if (String(p.key || '') !== ADMIN_KEY) return json({ ok: false, error: '通行碼不對' });
+  var u = String(p.u || '');
+  if (!/^https?:\/\//i.test(u)) return json({ ok: false, error: '網址不對' });
+  try {
+    var res = UrlFetchApp.fetch(u, { muteHttpExceptions: true, followRedirects: true,
+      headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36', 'Accept-Language': 'zh-TW,zh;q=0.9' } });
+    if (res.getResponseCode() >= 400) return json({ ok: false, error: '讀不到（' + res.getResponseCode() + '）' });
+    var html = res.getContentText();
+    var meta = function (k) {
+      var m = new RegExp('<meta[^>]+(?:property|name)=["\']' + k + '["\'][^>]*content=["\']([^"\']*)', 'i').exec(html)
+        || new RegExp('<meta[^>]+content=["\']([^"\']*)["\'][^>]*(?:property|name)=["\']' + k + '["\']', 'i').exec(html);
+      return m ? decode_(m[1]) : '';
+    };
+    var t = /<title[^>]*>([^<]*)/i.exec(html);
+    var until = /募資期間[\s\S]{0,120}?[–~～-]\s*(\d{4}\/\d{1,2}\/\d{1,2})/.exec(html);
+    return json({ ok: true, title: meta('og:title') || (t ? decode_(t[1]) : ''), desc: meta('og:description') || meta('description'),
+      image: meta('og:image'), until: until ? until[1] : '' });
+  } catch (err) {
+    return json({ ok: false, error: String(err.message || err) });
+  }
+}
+function decode_(s) {
+  return String(s).replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;|&#x27;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();
+}

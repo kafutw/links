@@ -131,6 +131,14 @@ input:focus,textarea:focus{border-color:var(--brand);outline:none}
 .tile.off{filter:grayscale(1);opacity:.6}
 .pv p{margin:8px 2px 0;font-size:12px;color:var(--muted);text-align:center}
 
+/* 貼連結自動填 */
+.quick{display:flex;flex-direction:column;gap:12px;margin-bottom:16px;border:1.5px solid var(--brand);background:linear-gradient(180deg,var(--soft),var(--surface) 70%)}
+.quick h2{margin:0;font-size:17px;font-weight:900;display:flex;align-items:center;gap:8px}
+.quick h2 i{font-style:normal;font-size:12px;font-weight:700;color:var(--brand-ink);background:var(--brand);border-radius:99px;padding:2px 9px}
+.quick p{margin:0;font-size:13px;color:var(--muted)}
+.quick .f input{font-size:16px}
+.quick .st{font-size:13px;font-weight:700;min-height:1.4em}
+.quick .st.run{color:var(--brand)} .quick .st.ok{color:var(--ok)} .quick .st.bad{color:var(--bad)}
 /* 已上架清單 */
 .items{display:flex;flex-direction:column}
 .it{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--rule)}
@@ -160,6 +168,14 @@ input:focus,textarea:focus{border-color:var(--brand);outline:none}
     <label for="key">通行碼</label>
     <input id="key" type="password" autocomplete="off" placeholder="第一次要填，之後這台裝置會記住">
     <small>通行碼只存在這台裝置，換手機或電腦要重新填一次</small>
+  </div>
+
+  <div class="card quick" id="quick">
+    <h2>貼連結，自動填好 <i>新</i></h2>
+    <p>貼上購買連結，會自動帶入商品名、重點、截止日和封面；有 YT 影片就貼在下面，封面改用影片縮圖。填好後檢查一下，按最下面「上架」。</p>
+    <label class="f"><span>購買連結</span><input id="qUrl" type="url" inputmode="url" placeholder="貼上嘖嘖、蝦皮、momo、好市多…的商品網址"></label>
+    <label class="f"><span>YT 影片連結</span><input id="qVideo" type="url" inputmode="url" placeholder="有的話貼這裡，Shorts 也可以"></label>
+    <div class="st" id="qMsg" aria-live="polite"></div>
   </div>
 
   <div class="grid">
@@ -436,6 +452,56 @@ function loadList(){
       .then(r => r.ok ? r.text() : '').then(t => t ? toItems(parseCSV(t)) : []).catch(() => [])))
     .then(lists => { ITEMS = mergeItems(lists); renderList(); });
 }
+
+/* ---------- 貼連結自動填：購買連結交給 Apps Script 去讀商品頁（網頁本身不能跨站讀），YT 連結直接帶入 ---------- */
+const qSay = (cls, t) => { $('#qMsg').className = 'st ' + cls; $('#qMsg').textContent = t; };
+function cleanTitle(t){
+  t = String(t || '').replace(/^\s*嘖嘖\s*[|｜]\s*/, '').replace(/\s*[|｜-]\s*(蝦皮購物|momo購物網|PChome 24h購物|Costco 好市多線上購物|博客來|Yahoo奇摩購物中心).*$/, '').trim();
+  const m = /^【([^】]+)】\s*(.*)$/.exec(t);
+  if (m){ const rest = m[2].split(/[｜|]/)[0].trim(); t = rest ? `${m[1]}｜${rest}` : m[1]; }
+  else t = t.split(/[｜|]/).slice(0, 2).join('｜');
+  return t.length > 40 ? t.slice(0, 40) : t;
+}
+function toPoints(desc){
+  return String(desc || '').split(/[。！？!?\n]+/).map(x => x.trim()).filter(x => x.length >= 4)
+    .flatMap(x => x.length > 26 ? x.split(/[，,；;]/).map(y => y.trim()).filter(y => y.length >= 4) : [x])
+    .slice(0, 3).join('\n');
+}
+let qTimer = 0, qLast = '';
+async function quickFill(){
+  const u = $('#qUrl').value.trim();
+  if (!safeUrl(u) || u === qLast) return;
+  qLast = u; $('#url').value = u; preview();
+  const key = $('#key').value.trim();
+  if (!key) return qSay('bad', '購買連結已帶入。先在最上面填通行碼，才能自動抓商品資料');
+  qSay('run', '讀取商品頁中…');
+  try {
+    const res = await fetch(`${API}?meta=1&key=${encodeURIComponent(key)}&u=${encodeURIComponent(u)}`);
+    const m = await res.json();
+    if (!m.ok) throw new Error(m.error || '讀不到');
+    const filled = [];
+    const name = cleanTitle(m.title); if (name){ $('#name').value = name; filled.push('商品名'); }
+    const pts = toPoints(m.desc); if (pts && !$('#more').value.trim()){ $('#more').value = pts; filled.push('重點'); }
+    if (m.until){
+      document.querySelector('input[name=status][value="團購中"]').checked = true;
+      $('#until').value = m.until.replace(/\//g, '-'); filled.push('截止日');
+    }
+    if (m.image && !imgData && !ytId($('#video').value)){ keepCover = m.image; showImg(); filled.push('封面'); }
+    preview();
+    qSay(filled.length ? 'ok' : 'bad', filled.length ? `已帶入：${filled.join('、')}。檢查一下，沒問題就按最下面「上架」` : '這個網站沒提供商品資料，請手動填');
+  } catch (err) {
+    qLast = '';
+    qSay('bad', err.message === '通行碼不對' ? '通行碼不對，改好再貼一次連結' : '這個網站讀不到（可能擋外部讀取），購買連結已帶入，其他請手動填');
+  }
+}
+$('#qUrl').addEventListener('input', () => { clearTimeout(qTimer); qTimer = setTimeout(quickFill, 400); });
+$('#qVideo').addEventListener('input', () => {
+  const v = $('#qVideo').value.trim();
+  if (!ytId(v)) return;
+  $('#video').value = v;
+  if (keepCover && !imgData && /^https?:\/\/(?!drive|lh3|kafutw)/.test(keepCover)) { keepCover = ''; showImg(); }
+  preview(); qSay('ok', 'YT 影片已帶入，封面會用影片縮圖');
+});
 
 try { $('#key').value = localStorage.getItem(KEY_STORE) || ''; } catch {}
 /* 網址帶入：admin.html?name=…&url=…&video=…&status=團購中&type=商品&until=2026-12-30&code=…&more=第一點%0A第二點
