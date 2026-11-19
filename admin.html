@@ -47,9 +47,9 @@ button,input,select{font:inherit;color:inherit}
 img{display:block;max-width:100%}
 
 .wrap{max-width:920px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
-header{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+header{display:flex;align-items:center;gap:10px;flex-wrap:nowrap}
 header img{width:44px;height:44px;border-radius:50%;background:#fff}
-header h1{margin:0;font-size:22px;font-weight:900;letter-spacing:.05em}
+header h1{margin:0;font-size:clamp(17px,5vw,22px);font-weight:900;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 header .sp{flex:1}
 header a{font-size:14px;font-weight:700;text-decoration:none}
 
@@ -160,6 +160,7 @@ input:focus,textarea:focus{border-color:var(--brand);outline:none}
 .qres li{display:flex;align-items:center;gap:6px;font-size:13px;padding:7px 10px;border-radius:10px;background:var(--tint);min-width:0}
 .qres li b{flex:none;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:11px;color:#fff;background:var(--ph)}
 .qres li.y b{background:var(--ok)} .qres li.y{background:var(--ok-soft)}
+.qres li.g b{background:var(--hot)} .qres li.g{background:var(--hot-soft)}
 .qcov{display:flex;flex-direction:column;gap:8px}
 .qcov-t{font-size:14px;font-weight:900}
 .qcov-t small{font-weight:500;color:var(--muted);font-size:12px;margin-left:4px}
@@ -173,6 +174,52 @@ input:focus,textarea:focus{border-color:var(--brand);outline:none}
 .qcov-g button.up b{font-size:26px;line-height:1;color:var(--brand)}
 .qres li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .quick .st.run{color:var(--brand)} .quick .st.ok{color:var(--ok)} .quick .st.bad{color:var(--bad)}
+/* 已上架清單 */
+/* 登入頁：一進來先輸入通行碼，像網站後台 */
+.gate{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:24px;background:linear-gradient(160deg,#FF9A4D,#E5571F 60%,#B9420F)}
+.gate[hidden]{display:none}
+.gate-c{width:100%;max-width:360px;background:var(--surface);border-radius:24px;padding:30px 24px 22px;display:flex;flex-direction:column;align-items:center;gap:10px;box-shadow:0 20px 60px rgba(80,25,0,.35)}
+.gate-c img{border-radius:18px;box-shadow:0 6px 16px rgba(229,87,31,.35)}
+.gate-c h1{margin:8px 0 0;font-size:21px;font-weight:900}
+.gate-c p{margin:0 0 8px;font-size:13px;color:var(--muted)}
+.gate-f{width:100%;display:flex;flex-direction:column;gap:6px;font-size:13.5px;font-weight:700}
+.gate-f input{height:50px;font-size:17px;letter-spacing:.12em;text-align:center}
+.gate-f input[readonly]{background:var(--tint);color:var(--muted);letter-spacing:.04em}
+.gate-b{width:100%;height:50px;border:0;border-radius:12px;background:var(--hot);color:#fff;font-size:17px;font-weight:900;cursor:pointer;box-shadow:0 3px 0 #B24A12;margin-top:4px}
+.gate-b:disabled{opacity:.6}
+.gate-m{min-height:1.3em;font-size:13.5px;font-weight:700;color:var(--bad)}
+.gate-c small{font-size:12px;color:var(--muted)}
+.logout{display:block;margin:18px auto 0;border:0;background:none;color:var(--muted);font-size:13px;text-decoration:underline;cursor:pointer}
+/* 右上角按鈕 → 手機從下方滑出、電腦從右側滑出的 sheet：已上架商品／連結頁 兩個分頁 */
+.sheetbtn{flex:none;display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 12px;border-radius:99px;border:1.5px solid var(--brand);background:var(--surface);color:var(--brand);font-weight:900;font-size:14px;cursor:pointer}
+.sheetbtn svg{width:18px;height:18px}
+.sheetbtn b{margin-left:4px;min-width:20px;height:20px;padding:0 6px;border-radius:99px;background:var(--brand);color:#fff;font-size:12px;display:inline-grid;place-items:center}
+.sheetbtn b:empty{display:none}
+.sheet{position:fixed;inset:0;z-index:50}
+.sheet[hidden]{display:none}
+.sheet-bg{position:absolute;inset:0;background:rgba(15,30,30,.42);animation:fade .2s}
+.sheet-p{position:absolute;left:0;right:0;bottom:0;height:86vh;height:86dvh;background:var(--surface);border-radius:22px 22px 0 0;display:flex;flex-direction:column;box-shadow:0 -10px 40px rgba(0,0,0,.2);animation:up .25s ease-out}
+.grab{width:42px;height:5px;border-radius:99px;background:var(--rule);margin:8px auto 2px}
+.sheet-h{display:flex;align-items:center;gap:10px;padding:8px 14px 12px;border-bottom:1px solid var(--rule)}
+.seg2{flex:1;display:grid;grid-template-columns:1fr 1fr;background:var(--tint);border-radius:12px;padding:4px}
+.seg2 button{height:38px;border:0;border-radius:9px;background:transparent;font-weight:900;font-size:14.5px;color:var(--muted);cursor:pointer}
+.seg2 button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.sheet .x{width:38px;height:38px;border-radius:50%;border:0;background:var(--tint);font-size:15px;cursor:pointer;color:var(--muted)}
+.sheet-b{flex:1;min-height:0;overflow:auto;padding:12px 16px calc(16px + env(safe-area-inset-bottom))}
+.sheet-b[hidden]{display:none}
+.sheet .lhint{margin:0 0 6px;font-size:12.5px;color:var(--muted)}
+.sheet-b[data-pane="page"]{display:flex;flex-direction:column;gap:8px;padding-bottom:0}
+.sheet-b[data-pane="page"][hidden]{display:none}
+.pgbar{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted)}
+.pgbar a{font-weight:700;text-decoration:none}
+#pgFrame{flex:1;width:100%;border:1px solid var(--rule);border-radius:14px 14px 0 0;background:var(--bg)}
+@keyframes up{from{transform:translateY(100%)}}
+@keyframes fade{from{opacity:0}}
+@keyframes side{from{transform:translateX(100%)}}
+@media (min-width:760px){
+  .sheet-p{left:auto;top:0;width:440px;height:auto;border-radius:22px 0 0 22px;animation:side .25s ease-out}
+  .grab{display:none}
+}
 /* 已上架清單 */
 .items{display:flex;flex-direction:column}
 .it{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--rule)}
@@ -190,19 +237,31 @@ input:focus,textarea:focus{border-color:var(--brand);outline:none}
 </style>
 </head>
 <body>
+<div class="gate" id="gate">
+  <form class="gate-c" id="gateF" action="admin.html" method="post" novalidate>
+    <img src="img/admin-icon-180.png?v=3" alt="" width="72" height="72">
+    <h1>社群團購導購主控</h1>
+    <p>卡夫卡愛旅行・團購導購後台</p>
+    <!-- 帳號欄＋密碼欄＋送出，Apple 鑰匙圈／Google 密碼管理工具才會跳出「儲存密碼」並在下次自動填入 -->
+    <label class="gate-f"><span>帳號</span><input id="gateUser" name="username" type="text" autocomplete="username" value="kafka" readonly></label>
+    <label class="gate-f"><span>通行碼</span><input id="gateKey" name="password" type="password" autocomplete="current-password" required placeholder="輸入通行碼"></label>
+    <button class="gate-b" id="gateGo" type="submit">登入</button>
+    <div class="gate-m" id="gateMsg" aria-live="polite"></div>
+    <small>這台裝置會記住，下次打開就直接進去；鑰匙圈問要不要儲存，選「儲存」</small>
+  </form>
+</div>
 <div class="wrap">
   <header>
     <img src="avatar.jpg" alt="" width="44" height="44">
     <h1>社群團購導購主控</h1>
     <span class="sp"></span>
-    <a href="https://kafu.tw/bio" target="_blank" rel="noopener">看連結頁 ›</a>
+    <button type="button" class="sheetbtn" id="sheetBtn" aria-controls="sheet" aria-expanded="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg>
+      <span>已上架<b id="sheetN"></b></span>
+    </button>
   </header>
 
-  <div class="card key" id="keyBox">
-    <label for="key">通行碼</label>
-    <input id="key" type="password" autocomplete="off" placeholder="第一次要填，之後這台裝置會記住">
-    <small>通行碼只存在這台裝置，換手機或電腦要重新填一次</small>
-  </div>
+  <input id="key" type="hidden">
 
   <div class="card quick" id="quick">
     <h2><span class="stp">1</span>貼連結，自動填好</h2>
@@ -282,10 +341,29 @@ input:focus,textarea:focus{border-color:var(--brand);outline:none}
     </div>
   </div>
 
-  <div class="card list">
-    <h2>已上架（點「修改」帶進上面重填，送出後以最新那筆為準）</h2>
-    <div class="items" id="items"><div class="empty">讀取中…</div></div>
-  </div>
+</div>
+
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-bg" data-close></div>
+  <section class="sheet-p" role="dialog" aria-modal="true" aria-label="已上架商品與連結頁">
+    <span class="grab" aria-hidden="true"></span>
+    <div class="sheet-h">
+      <div class="seg2" role="tablist">
+        <button type="button" role="tab" aria-selected="true" data-tab="items">已上架商品</button>
+        <button type="button" role="tab" aria-selected="false" data-tab="page">連結頁</button>
+      </div>
+      <button type="button" class="x" data-close aria-label="關閉">✕</button>
+    </div>
+    <div class="sheet-b" data-pane="items">
+      <p class="lhint" id="listN">讀取中…</p>
+      <div class="items" id="items"><div class="empty">讀取中…</div></div>
+      <button type="button" class="logout" id="logout">登出這台裝置</button>
+    </div>
+    <div class="sheet-b" data-pane="page" hidden>
+      <div class="pgbar"><span>讀者看到的樣子</span><a href="https://kafu.tw/bio" target="_blank" rel="noopener">新分頁開啟 ›</a></div>
+      <iframe id="pgFrame" title="連結頁" loading="lazy"></iframe>
+    </div>
+  </section>
 </div>
 
 <script>
@@ -475,7 +553,10 @@ function renderList(){
     return `<div class="it"><span class="th">${src ? `<img src="${esc(src)}" alt="" loading="lazy" onerror="this.remove()">` : ''}</span>
       <span style="min-width:0"><b>${esc(it.name)}</b><small>${st} ${it.code ? '折扣碼 ' + esc(it.code) : ''}</small></span>
       <button type="button" data-i="${i}">修改</button></div>`;
-  }).join('') : '<div class="empty">還沒有商品，從上面新增第一筆吧</div>';
+  }).join('') : '<div class="empty">還沒有商品，從下面新增第一筆吧</div>';
+  const live = ITEMS.filter(it => !isOff(it) && /團購/.test(it.status)).length, on = ITEMS.filter(it => !isOff(it)).length;
+  $('#listN').textContent = ITEMS.length ? `上架中 ${on} 件${live ? `（團購中 ${live}）` : ''}。點「修改」會帶進表單，改完重新上架，以最新那筆為準` : '還沒有商品';
+  $('#sheetN').textContent = ITEMS.length ? on : '';
 }
 $('#items').addEventListener('click', e => {
   const b = e.target.closest('[data-i]'); if (!b) return;
@@ -488,7 +569,8 @@ $('#items').addEventListener('click', e => {
   const dt = parseDate(it.until);
   $('#until').value = dt ? `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}` : '';
   imgData = null; keepCover = it.coverRaw; showImg(); preview(); $('#msg').hidden = true;
-  window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  closeSheet();
+  $('#f').closest('.card').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
 });
 function loadList(){
   const base = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=1&`;
@@ -518,31 +600,55 @@ async function quickFill(force){
   if (!force && u === qLast) return;
   qLast = u; $('#url').value = u; preview();
   const key = $('#key').value.trim();
-  if (!key) return qSay('bad', '購買連結已帶入。先在最上面填通行碼，才能自動抓商品資料');
+  if (!key) return qSay('bad', '購買連結已帶入。請重新登入後再按分析');
   qSay('run', '讀取商品頁中…');
   try {
     const res = await fetch(`${API}?meta=1&key=${encodeURIComponent(key)}&u=${encodeURIComponent(u)}&v=${encodeURIComponent($('#video').value.trim())}`);
     const m = await res.json();
     if (!m.ok) throw new Error(m.error || '讀不到');
-    const filled = [];
-    const name = cleanTitle(m.title); if (name){ $('#name').value = name; filled.push('商品名'); }
-    const pts = toPoints(m.desc); if (pts && !$('#more').value.trim()){ $('#more').value = pts; filled.push('重點'); }
-    if (m.until){
-      document.querySelector('input[name=status][value="團購中"]').checked = true;
-      $('#until').value = m.until.replace(/\//g, '-'); filled.push('截止日');
-    }
-    qImage = m.image || '';
-    preview(); showRes(filled);
-    qSay(filled.length ? 'ok' : 'bad', filled.length ? `已帶入：${filled.join('、')}${m.via === 'youtube' ? '（商品頁讀不到，商品名先用影片標題，記得改短）' : ''}。檢查一下，沒問題就按最下面「上架」` : '這個網站沒提供商品資料，請手動填');
+    const r = autoFill(m);
+    qSay('ok', `已幫你填好 ${r.done.length + r.guess.length} 項${r.guess.length ? `，其中「${r.guess.join('、')}」是先猜的，請確認` : ''}。檢查一下，錯的直接改，沒問題就到最下面上架`);
   } catch (err) {
-    qLast = ''; showRes([]);
-    qSay('bad', err.message === '通行碼不對' ? '通行碼不對，改好再貼一次連結' : '這個網站讀不到（可能擋外部讀取），購買連結已帶入，其他請手動填');
+    qLast = '';
+    const r = autoFill({});
+    qSay('bad', err.message === '通行碼不對' ? '通行碼不對，改好再按一次分析' : `商品頁讀不到，先幫你填了 ${r.done.length + r.guess.length} 項，其他請手動補`);
   }
 }
-function showRes(filled){
-  const rows = [['購買連結', !!safeUrl($('#url').value)], ['商品名', filled.includes('商品名')], ['重點', filled.includes('重點')],
-    ['截止日', filled.includes('截止日')], ['封面候選', !!qImage || !!ytId($('#video').value)], ['YT 影片', !!ytId($('#video').value)]];
-  $('#qRes').innerHTML = rows.map(([k, y]) => `<li class="${y ? 'y' : ''}"><b>${y ? '✓' : '–'}</b><span>${k}${y ? '' : '：請手動填'}</span></li>`).join('');
+/* 盡量填：抓到的直接填；抓不到的用網址、影片標題、商品名猜一個先填上，標成「先猜的」讓使用者改 */
+const GROUP_HOST = /zeczec\.com|flyingv\.cc|wabay\.tw|backme\.tw|sangu\.vip|團購/i;
+const TRIP_HOST = /klook\.com|kkday\.com|liontravel\.com|agoda\.com|booking\.com|trip\.com|eztravel|colatour|settour|easytravel/i;
+function autoFill(m){
+  const done = [], guess = [], u = $('#url').value;
+  const setStatus = v => { document.querySelector(`input[name=status][value="${v}"]`).checked = true; };
+  // 商品名
+  const name = cleanTitle(m.title);
+  if (name){ $('#name').value = name; (m.via === 'youtube' ? guess : done).push('商品名'); }
+  // 重點：先用簡介，不夠 3 點用標題後半段補
+  const tail = String(m.title || '').replace(/^\s*嘖嘖\s*[|｜]\s*/, '').replace(/^【[^】]+】/, '').split(/[｜|]/).slice(1).join('，');
+  const pts = toPoints([m.desc, tail].filter(Boolean).join('。'));
+  if (pts){ $('#more').value = pts; done.push('重點'); }
+  // 類型
+  if (TRIP_HOST.test(u)){ document.querySelector('input[name=type][value="旅遊"]').checked = true; guess.push('類型'); }
+  else document.querySelector('input[name=type][value="商品"]').checked = true;
+  // 狀態＋截止日：抓到就用；集資／團購網站抓不到日期就先填 30 天後
+  if (m.until){ setStatus('團購中'); $('#until').value = toInputDate(parseDate(m.until)); done.push('截止日'); }
+  else if (GROUP_HOST.test(u)){ setStatus('團購中'); const d = new Date(); d.setDate(d.getDate() + 30); $('#until').value = toInputDate(d); guess.push('截止日'); }
+  else { setStatus('隨時可買'); guess.push('狀態'); }
+  // 封面：有影片就預設用影片直式縮圖，沒有就用商品圖
+  qImage = m.image || '';
+  if (!imgData && !ytId($('#video').value) && qImage){ keepCover = qImage; showImg(); }
+  if (qImage || ytId($('#video').value)) done.push('封面');
+  preview(); showRes(done, guess);
+  return { done, guess };
+}
+function toInputDate(d){ return d ? `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}` : ''; }
+function showRes(done, guess){
+  guess = guess || [];
+  const st = k => done.includes(k) ? 'y' : guess.includes(k) ? 'g' : '';
+  const rows = [['購買連結', safeUrl($('#url').value) ? 'y' : ''], ['商品名', st('商品名')], ['重點', st('重點')],
+    [guess.includes('狀態') ? '狀態' : '截止日', st('截止日') || st('狀態')], ['封面', st('封面')], ['YT 影片', ytId($('#video').value) ? 'y' : '']];
+  const lab = { y: '', g: '：先猜的', '': '：請手動填' }, ico = { y: '✓', g: '?', '': '–' };
+  $('#qRes').innerHTML = rows.map(([k, c]) => `<li class="${c}"><b>${ico[c]}</b><span>${k}${lab[c]}</span></li>`).join('');
   $('#qRes').hidden = false;
   renderCovers();
 }
@@ -580,7 +686,57 @@ $('#qVideo').addEventListener('input', () => {
   preview(); qSay('ok', 'YT 影片已帶入，封面會用影片縮圖');
 });
 
-try { $('#key').value = localStorage.getItem(KEY_STORE) || ''; } catch {}
+/* ---------- sheet：已上架商品／連結頁 ---------- */
+function openSheet(tab){
+  $('#sheet').hidden = false; $('#sheetBtn').setAttribute('aria-expanded', 'true');
+  document.documentElement.style.overflow = 'hidden';
+  showTab(tab || 'items');
+}
+function closeSheet(){
+  $('#sheet').hidden = true; $('#sheetBtn').setAttribute('aria-expanded', 'false');
+  document.documentElement.style.overflow = '';
+}
+function showTab(t){
+  document.querySelectorAll('.seg2 [data-tab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === t)));
+  document.querySelectorAll('.sheet-b').forEach(p => p.hidden = p.dataset.pane !== t);
+  if (t === 'page') $('#pgFrame').src = 'index.html?t=' + Date.now();
+}
+$('#sheetBtn').addEventListener('click', () => openSheet());
+$('#sheet').addEventListener('click', e => {
+  if (e.target.closest('[data-close]')) return closeSheet();
+  const b = e.target.closest('[data-tab]'); if (b) showTab(b.dataset.tab);
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#sheet').hidden) closeSheet(); });
+
+/* ---------- 登入：用通行碼問 Apps Script（通行碼對了才會回「網址不對」），對了才進後台 ---------- */
+async function checkKey(k){
+  const r = await fetch(`${API}?meta=1&key=${encodeURIComponent(k)}&u=check`);
+  const o = await r.json();
+  return o.error !== '通行碼不對';
+}
+function enter(k){
+  $('#key').value = k; try { localStorage.setItem(KEY_STORE, k); } catch {}
+  $('#gate').hidden = true;
+}
+$('#gateF').addEventListener('submit', async e => {
+  e.preventDefault();
+  const k = $('#gateKey').value.trim();
+  if (!k) return $('#gateMsg').textContent = '請輸入通行碼';
+  $('#gateGo').disabled = true; $('#gateGo').textContent = '確認中…'; $('#gateMsg').textContent = '';
+  try { if (await checkKey(k)) enter(k); else { $('#gateMsg').textContent = '通行碼不對，再試一次'; $('#gateKey').select(); } }
+  catch { $('#gateMsg').textContent = '連不上 Google，檢查網路再試一次'; }
+  finally { $('#gateGo').disabled = false; $('#gateGo').textContent = '登入'; }
+});
+$('#logout').addEventListener('click', () => {
+  try { localStorage.removeItem(KEY_STORE); } catch {}
+  $('#key').value = ''; $('#gateKey').value = ''; closeSheet(); $('#gate').hidden = false;
+});
+(function(){
+  let k = ''; try { k = localStorage.getItem(KEY_STORE) || ''; } catch {}
+  if (!k) return $('#gateKey').focus();
+  enter(k);                                   // 記住的通行碼先直接進去
+  checkKey(k).then(ok => { if (!ok){ $('#gate').hidden = false; $('#gateMsg').textContent = '通行碼已經換了，請重新輸入'; } }).catch(() => {});
+})();
 /* 網址帶入：admin.html?name=…&url=…&video=…&status=團購中&type=商品&until=2026-12-30&code=…&more=第一點%0A第二點
    用來在手機點一個連結就把表單填好；只填欄位，不會自動送出 */
 (function prefill(){
