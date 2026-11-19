@@ -138,6 +138,26 @@ input:focus,textarea:focus{border-color:var(--brand);outline:none}
 .quick p{margin:0;font-size:13px;color:var(--muted)}
 .quick .f input{font-size:16px}
 .quick .st{font-size:13px;font-weight:700;min-height:1.4em}
+.quick .qgo{display:flex;align-items:center;justify-content:center;gap:8px;height:48px;border:0;border-radius:12px;background:var(--hot);color:#fff;font-size:16px;font-weight:900;cursor:pointer;box-shadow:0 3px 0 #B24A12}
+.quick .qgo svg{width:20px;height:20px}
+.quick .qgo:active{transform:translateY(2px);box-shadow:0 1px 0 #B24A12}
+.quick .qgo:disabled{opacity:.6}
+.qres{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.qres li{display:flex;align-items:center;gap:6px;font-size:13px;padding:7px 10px;border-radius:10px;background:var(--tint);min-width:0}
+.qres li b{flex:none;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:11px;color:#fff;background:var(--ph)}
+.qres li.y b{background:var(--ok)} .qres li.y{background:var(--ok-soft)}
+.qcov{display:flex;flex-direction:column;gap:8px}
+.qcov-t{font-size:14px;font-weight:900}
+.qcov-t small{font-weight:500;color:var(--muted);font-size:12px;margin-left:4px}
+.qcov-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.qcov-g button{position:relative;padding:0;border:2px solid transparent;border-radius:12px;overflow:hidden;background:var(--ph);aspect-ratio:3/4;cursor:pointer}
+.qcov-g button img{width:100%;height:100%;object-fit:cover;display:block}
+.qcov-g button i{position:absolute;left:6px;bottom:6px;font-style:normal;font-size:11px;font-weight:700;color:#fff;background:rgba(0,0,0,.55);border-radius:99px;padding:2px 7px}
+.qcov-g button.on{border-color:var(--hot);box-shadow:0 0 0 2px var(--hot)}
+.qcov-g button.on::after{content:"✓";position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;background:var(--hot);color:#fff;font-size:13px;font-weight:900;display:grid;place-items:center}
+.qcov-g button.up{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:var(--tint);border:2px dashed var(--rule);color:var(--muted);font-size:12px;font-weight:700}
+.qcov-g button.up b{font-size:26px;line-height:1;color:var(--brand)}
+.qres li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .quick .st.run{color:var(--brand)} .quick .st.ok{color:var(--ok)} .quick .st.bad{color:var(--bad)}
 /* 已上架清單 */
 .items{display:flex;flex-direction:column}
@@ -172,10 +192,16 @@ input:focus,textarea:focus{border-color:var(--brand);outline:none}
 
   <div class="card quick" id="quick">
     <h2>貼連結，自動填好 <i>新</i></h2>
-    <p>貼上購買連結，會自動帶入商品名、重點、截止日和封面；有 YT 影片就貼在下面，封面改用影片縮圖。填好後檢查一下，按最下面「上架」。</p>
+    <p>貼上購買連結（有 YT 影片也貼上），按「分析」，會自動帶入商品名、重點、截止日和封面，並列出哪些抓到、哪些要手動補。</p>
     <label class="f"><span>購買連結</span><input id="qUrl" type="url" inputmode="url" placeholder="貼上嘖嘖、蝦皮、momo、好市多…的商品網址"></label>
     <label class="f"><span>YT 影片連結</span><input id="qVideo" type="url" inputmode="url" placeholder="有的話貼這裡，Shorts 也可以"></label>
+    <button type="button" class="qgo" id="qGo"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>分析</span></button>
     <div class="st" id="qMsg" aria-live="polite"></div>
+    <ul class="qres" id="qRes" hidden></ul>
+    <div class="qcov" id="qCovWrap" hidden>
+      <span class="qcov-t">選封面 <small>點一下就換，下面預覽會跟著變</small></span>
+      <div class="qcov-g" id="qCov"></div>
+    </div>
   </div>
 
   <div class="grid">
@@ -374,7 +400,7 @@ function showImg(){
 }
 $('#file').addEventListener('change', async e => {
   const f = e.target.files[0]; if (!f) return;
-  try { imgData = await loadImage(f); keepCover = ''; showImg(); preview(); }
+  try { imgData = await loadImage(f); keepCover = ''; showImg(); preview(); if (!$('#qCovWrap').hidden) renderCovers(); }
   catch (err) { say('bad', err.message); }
   e.target.value = '';
 });
@@ -467,10 +493,11 @@ function toPoints(desc){
     .flatMap(x => x.length > 26 ? x.split(/[，,；;]/).map(y => y.trim()).filter(y => y.length >= 4) : [x])
     .slice(0, 3).join('\n');
 }
-let qTimer = 0, qLast = '';
-async function quickFill(){
+let qTimer = 0, qLast = '', qImage = '';
+async function quickFill(force){
   const u = $('#qUrl').value.trim();
-  if (!safeUrl(u) || u === qLast) return;
+  if (!safeUrl(u)) return qSay('bad', '先貼上購買連結（要 https:// 開頭）');
+  if (!force && u === qLast) return;
   qLast = u; $('#url').value = u; preview();
   const key = $('#key').value.trim();
   if (!key) return qSay('bad', '購買連結已帶入。先在最上面填通行碼，才能自動抓商品資料');
@@ -486,15 +513,47 @@ async function quickFill(){
       document.querySelector('input[name=status][value="團購中"]').checked = true;
       $('#until').value = m.until.replace(/\//g, '-'); filled.push('截止日');
     }
-    if (m.image && !imgData && !ytId($('#video').value)){ keepCover = m.image; showImg(); filled.push('封面'); }
-    preview();
+    qImage = m.image || '';
+    preview(); showRes(filled);
     qSay(filled.length ? 'ok' : 'bad', filled.length ? `已帶入：${filled.join('、')}。檢查一下，沒問題就按最下面「上架」` : '這個網站沒提供商品資料，請手動填');
   } catch (err) {
-    qLast = '';
+    qLast = ''; showRes([]);
     qSay('bad', err.message === '通行碼不對' ? '通行碼不對，改好再貼一次連結' : '這個網站讀不到（可能擋外部讀取），購買連結已帶入，其他請手動填');
   }
 }
-$('#qUrl').addEventListener('input', () => { clearTimeout(qTimer); qTimer = setTimeout(quickFill, 400); });
+function showRes(filled){
+  const rows = [['購買連結', !!safeUrl($('#url').value)], ['商品名', filled.includes('商品名')], ['重點', filled.includes('重點')],
+    ['截止日', filled.includes('截止日')], ['封面候選', !!qImage || !!ytId($('#video').value)], ['YT 影片', !!ytId($('#video').value)]];
+  $('#qRes').innerHTML = rows.map(([k, y]) => `<li class="${y ? 'y' : ''}"><b>${y ? '✓' : '–'}</b><span>${k}${y ? '' : '：請手動填'}</span></li>`).join('');
+  $('#qRes').hidden = false;
+  renderCovers();
+}
+/* 封面候選：影片直式縮圖（預設）、影片橫式、影片中的 3 個畫面、商品頁主圖，或自己上傳 */
+function renderCovers(){
+  const id = ytId($('#video').value), c = [];
+  const auto = id ? `https://i.ytimg.com/vi/${id}/oar2.jpg` : '';
+  if (id) c.push([auto, '影片直式'], [`https://i.ytimg.com/vi/${id}/hq1.jpg`, '畫面 1'], [`https://i.ytimg.com/vi/${id}/hq2.jpg`, '畫面 2'],
+    [`https://i.ytimg.com/vi/${id}/hq3.jpg`, '畫面 3'], [`https://i.ytimg.com/vi/${id}/maxresdefault.jpg`, '影片橫式']);
+  if (qImage) c.unshift([qImage, '商品圖']);
+  const cur = imgData ? 'upload' : (keepCover || auto);
+  $('#qCov').innerHTML = c.map(([src, label]) => `<button type="button" data-src="${esc(src)}" class="${cur === src ? 'on' : ''}"><img src="${esc(src)}" alt="" onerror="this.parentNode.remove()"><i>${label}</i></button>`).join('')
+    + `<button type="button" class="up${cur === 'upload' ? ' on' : ''}" data-up="1">${imgData ? `<img src="${esc(imgData.preview)}" alt=""><i>自己上傳</i>` : '<b>＋</b>自己上傳'}</button>`;
+  $('#qCovWrap').hidden = false;
+}
+$('#qCov').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.up) return $('#file').click();
+  const id = ytId($('#video').value), auto = id ? `https://i.ytimg.com/vi/${id}/oar2.jpg` : '';
+  imgData = null; keepCover = b.dataset.src === auto ? '' : b.dataset.src;
+  showImg(); preview(); renderCovers();
+});
+$('#qGo').addEventListener('click', async () => {
+  const v = $('#qVideo').value.trim();
+  if (v && ytId(v)) $('#video').value = v;
+  $('#qGo').disabled = true; $('#qGo').querySelector('span').textContent = '分析中…';
+  try { await quickFill(true); } finally { $('#qGo').disabled = false; $('#qGo').querySelector('span').textContent = '分析'; }
+  $('#qRes').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+});
 $('#qVideo').addEventListener('input', () => {
   const v = $('#qVideo').value.trim();
   if (!ytId(v)) return;
