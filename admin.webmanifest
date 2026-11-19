@@ -1,0 +1,13 @@
+{
+  "name": "好物上架｜卡夫卡愛旅行",
+  "short_name": "好物上架",
+  "start_url": "./admin.html",
+  "scope": "./admin.html",
+  "display": "standalone",
+  "background_color": "#EAEDEC",
+  "theme_color": "#347E86",
+  "icons": [
+    { "src": "img/admin-icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "img/admin-icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
