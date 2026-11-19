@@ -129,6 +129,13 @@ input:focus,textarea:focus{border-color:var(--brand);outline:none}
 @keyframes tap{0%,55%,100%{transform:translateY(0) scale(1)}65%{transform:translateY(3px) scale(.88)}75%{transform:translateY(0) scale(1)}}
 @media (prefers-reduced-motion: reduce){.tile .go .hand{animation:none}}
 .tile.off{filter:grayscale(1);opacity:.6}
+/* 預覽框：虛線框＋「預覽・不能點」標籤，跟上面的操作區明顯分開，也點不到 */
+.pvbox{position:relative;border:2px dashed var(--rule);border-radius:20px;padding:22px 10px 10px;background:repeating-linear-gradient(135deg,transparent 0 10px,rgba(20,40,40,.025) 10px 20px)}
+.pvtag{position:absolute;top:-13px;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:5px;white-space:nowrap;background:var(--ink);color:#fff;font-size:12px;font-weight:700;letter-spacing:.06em;border-radius:99px;padding:4px 12px}
+.pvtag svg{width:15px;height:15px}
+#pv{pointer-events:none;user-select:none}
+#pv .go{filter:saturate(.35);opacity:.75}
+@media (max-width:800px){ .pv{margin-top:14px;padding-top:22px;border-top:1px solid var(--rule)} }
 .pv p{margin:8px 2px 0;font-size:12px;color:var(--muted);text-align:center}
 
 /* 貼連結自動填 */
@@ -259,8 +266,11 @@ input:focus,textarea:focus{border-color:var(--brand);outline:none}
 
     <div class="pv">
       <h2>連結頁上會長這樣</h2>
-      <div class="tile" id="pv"></div>
-      <p>點這張卡會直接打開購買連結；有上傳封面就用封面，沒有就用 YT 縮圖。去背的 png 會整個放進框，照片會填滿</p>
+      <div class="pvbox" aria-label="預覽，不能點">
+        <span class="pvtag"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>預覽・不能點</span>
+        <div class="tile" id="pv" aria-hidden="true"></div>
+      </div>
+      <p>這裡只是預覽；讀者在連結頁點這張卡，才會打開購買連結</p>
     </div>
   </div>
 
